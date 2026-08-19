@@ -1,0 +1,226 @@
+"use client";
+
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+
+export interface ParticleFieldProps
+  extends React.HTMLAttributes<HTMLCanvasElement> {
+  /** Fill color of each node. */
+  particleColor?: string;
+  /** Base color of the links between nodes, as `r, g, b`. */
+  linkColorRgb?: string;
+  /** Link color used inside the pointer radius, as `r, g, b`. */
+  linkHighlightRgb?: string;
+  /** One particle per N square pixels. Lower means denser. */
+  density?: number;
+  /** Pointer influence radius, in CSS pixels. */
+  pointerRadius?: number;
+  /** Max distance at which two nodes are linked, in CSS pixels. */
+  linkDistance?: number;
+  /** Movement speed multiplier. */
+  speed?: number;
+}
+
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  alpha: number;
+}
+
+/**
+ * Animated particle network rendered on a canvas, sized to its parent element.
+ *
+ * Purely decorative: it is marked `aria-hidden` and falls back to a single
+ * static frame when the user prefers reduced motion.
+ */
+export function ParticleField({
+  className,
+  particleColor = "255, 212, 0",
+  linkColorRgb = "255, 171, 0",
+  linkHighlightRgb = "255, 248, 220",
+  density = 11000,
+  pointerRadius = 180,
+  linkDistance = 130,
+  speed = 1,
+  ...props
+}: ParticleFieldProps) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const parent = canvas.parentElement ?? canvas;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    let particles: Particle[] = [];
+    let frameId = 0;
+    let width = 0;
+    let height = 0;
+    const pointer: { x: number | null; y: number | null } = { x: null, y: null };
+
+    const seed = () => {
+      const target = Math.min(
+        Math.floor((width * height) / density),
+        // Hard ceiling: link detection is O(n^2), so an unbounded count on
+        // large displays would stall the main thread.
+        220,
+      );
+
+      particles = Array.from({ length: target }, () => {
+        const size = Math.random() * 1.6 + 0.8;
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.4 * speed,
+          vy: (Math.random() - 0.5) * 0.4 * speed,
+          size,
+          alpha: Math.random() * 0.5 + 0.5,
+        };
+      });
+    };
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = parent.getBoundingClientRect();
+
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      seed();
+    };
+
+    const drawLinks = () => {
+      const maxDistanceSq = linkDistance * linkDistance;
+      const pointerRadiusSq = pointerRadius * pointerRadius;
+
+      ctx.lineWidth = 1;
+
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a + 1; b < particles.length; b++) {
+          const dx = particles[a].x - particles[b].x;
+          const dy = particles[a].y - particles[b].y;
+          const distanceSq = dx * dx + dy * dy;
+          if (distanceSq > maxDistanceSq) continue;
+
+          const opacity = (1 - distanceSq / maxDistanceSq) * 0.55;
+          let near = false;
+
+          if (pointer.x !== null && pointer.y !== null) {
+            const px = particles[a].x - pointer.x;
+            const py = particles[a].y - pointer.y;
+            near = px * px + py * py < pointerRadiusSq;
+          }
+
+          ctx.strokeStyle = `rgba(${near ? linkHighlightRgb : linkColorRgb}, ${opacity})`;
+          ctx.beginPath();
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.stroke();
+        }
+      }
+    };
+
+    const step = (particle: Particle) => {
+      if (particle.x > width || particle.x < 0) particle.vx = -particle.vx;
+      if (particle.y > height || particle.y < 0) particle.vy = -particle.vy;
+
+      if (pointer.x !== null && pointer.y !== null) {
+        const dx = pointer.x - particle.x;
+        const dy = pointer.y - particle.y;
+        const distance = Math.hypot(dx, dy) || 1;
+
+        if (distance < pointerRadius + particle.size) {
+          const force = (pointerRadius - distance) / pointerRadius;
+          particle.x -= (dx / distance) * force * 4;
+          particle.y -= (dy / distance) * force * 4;
+        }
+      }
+
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+    };
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const particle of particles) {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${particleColor}, ${particle.alpha})`;
+        ctx.fill();
+      }
+
+      drawLinks();
+    };
+
+    const animate = () => {
+      for (const particle of particles) step(particle);
+      render();
+      frameId = requestAnimationFrame(animate);
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = event.clientX - rect.left;
+      pointer.y = event.clientY - rect.top;
+    };
+
+    const handlePointerLeave = () => {
+      pointer.x = null;
+      pointer.y = null;
+    };
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(parent);
+    resize();
+
+    if (prefersReducedMotion) {
+      render();
+    } else {
+      window.addEventListener("pointermove", handlePointerMove, {
+        passive: true,
+      });
+      window.addEventListener("pointerleave", handlePointerLeave);
+      animate();
+    }
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+      cancelAnimationFrame(frameId);
+    };
+  }, [
+    particleColor,
+    linkColorRgb,
+    linkHighlightRgb,
+    density,
+    pointerRadius,
+    linkDistance,
+    speed,
+  ]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className={cn("absolute inset-0 h-full w-full", className)}
+      {...props}
+    />
+  );
+}
+
+export default ParticleField;
