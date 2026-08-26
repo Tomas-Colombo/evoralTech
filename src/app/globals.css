@@ -14,17 +14,18 @@
   --muted: #a1a1aa;
   --border: rgba(255, 196, 0, 0.14);
 
-  /* Electric gold ramp, sampled from the logo */
-  --gold-50: #fff8dc;
-  --gold-100: #ffef9f;
-  --gold-200: #ffe14d;
-  --gold-300: #ffd400;
-  --gold-400: #ffc400;
-  --gold-500: #ffab00;
-  --gold-600: #e58a00;
-  --gold-700: #b36a00;
+  /* Metallic gold ramp: champagne highlight down to bronze, so type reads
+     as brushed metal rather than flat highlighter yellow. */
+  --gold-50: #fff6e3;
+  --gold-100: #f9e7bd;
+  --gold-200: #f0d191;
+  --gold-300: #e3b667;
+  --gold-400: #d09a41;
+  --gold-500: #b87d28;
+  --gold-600: #96611b;
+  --gold-700: #6d4512;
 
-  --glow: rgba(255, 196, 0, 0.35);
+  --glow: rgba(224, 178, 96, 0.32);
 }
 
 @theme inline {
@@ -44,6 +45,7 @@
   --color-gold-600: var(--gold-600);
   --color-gold-700: var(--gold-700);
 
+  --font-display: var(--font-display);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -87,13 +89,20 @@ body {
   }
 }
 
-/* Anchor navigation from the hero CTAs */
-html {
-  scroll-behavior: smooth;
+/* Lenis drives scrolling; the native smooth behaviour would fight it */
+html.lenis,
+html.lenis body {
+  height: auto;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }

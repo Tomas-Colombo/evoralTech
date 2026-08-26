@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
-import { ProjectCard } from "@/components/ui/project-card";
+import { ProjectCarousel } from "@/components/ui/project-carousel";
 import { projects } from "@/data/projects";
 
 const reveal: Variants = {
@@ -43,7 +43,7 @@ export function Projects() {
           <span className="text-xs font-medium uppercase tracking-[0.2em] text-gold-400">
             Proyectos
           </span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
+          <h2 className="font-display mt-4 text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-5xl">
             Sistemas que seguimos sosteniendo
           </h2>
           <p className="mt-5 text-balance text-base leading-relaxed text-muted sm:text-lg">
@@ -52,21 +52,17 @@ export function Projects() {
           </p>
         </motion.header>
 
-        <ul className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => (
-            <motion.li
-              key={project.slug}
-              custom={index + 1}
-              variants={variants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              className="flex"
-            >
-              <ProjectCard project={project} className="w-full" />
-            </motion.li>
-          ))}
-        </ul>
+        <motion.div
+          custom={1}
+          variants={variants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          className="mt-16"
+        >
+          <ProjectCarousel projects={projects} />
+        </motion.div>
+
       </div>
     </section>
   );

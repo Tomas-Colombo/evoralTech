@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { Cpu, Layers, ShieldCheck, Terminal } from "lucide-react";
 
+import { FlipWords } from "@/components/ui/flip-words";
 import { MiniNavbar } from "@/components/ui/mini-navbar";
 import { ParticleField } from "@/components/ui/particle-field";
 
@@ -83,7 +84,7 @@ export function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mb-6 bg-gradient-to-b from-gold-50 via-gold-300 to-gold-600 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-7xl md:text-8xl"
+          className="font-display mb-6 bg-gradient-to-b from-gold-50 via-gold-200 to-gold-500 bg-clip-text text-5xl font-bold tracking-[-0.03em] text-transparent sm:text-7xl md:text-8xl"
         >
           EvoralTech
         </motion.h1>
@@ -93,15 +94,13 @@ export function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mb-10 max-w-2xl text-balance"
+          className="mb-10 flex max-w-3xl flex-wrap items-baseline justify-center gap-x-3 gap-y-1 text-lg text-muted sm:text-xl"
         >
-          <span className="block text-xl font-medium leading-snug text-gold-100 sm:text-2xl">
-            Primero la arquitectura, después el código.
-          </span>
-          <span className="mt-3 block text-base leading-relaxed text-muted sm:text-lg">
-            Construimos sistemas pensados para durar años, no para llegar a la
-            demo.
-          </span>
+          <span>Convertimos ideas en</span>
+          <FlipWords
+            words={["PRODUCTOS", "SISTEMAS", "SOFTWARE", "IMPACTO"]}
+            className="font-display bg-gradient-to-b from-gold-50 via-gold-300 to-gold-600 bg-clip-text text-xl font-bold tracking-[0.01em] text-transparent sm:text-2xl"
+          />
         </motion.p>
 
         <motion.div
