@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowUpRight, Mail, MapPin } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 
 import { siteConfig } from "@/data/site";
 
@@ -122,6 +122,17 @@ export function Footer() {
                   className="transition-colors hover:text-gold-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
                 >
                   {siteConfig.email}
+                </a>
+              </li>
+              <li className="flex items-start gap-2">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold-400" aria-hidden="true" />
+                <a
+                  href={siteConfig.whatsapp}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="transition-colors hover:text-gold-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
+                >
+                  {siteConfig.phone}
                 </a>
               </li>
             </ul>

@@ -1,6 +1,10 @@
 import type { ComponentType, SVGProps } from "react";
 
-import { InstagramIcon, LinkedinIcon } from "@/components/ui/social-icons";
+import {
+  InstagramIcon,
+  LinkedinIcon,
+  WhatsappIcon,
+} from "@/components/ui/social-icons";
 
 export interface SocialLink {
   label: string;
@@ -23,8 +27,12 @@ export const siteConfig = {
   description:
     "Convertimos ideas en productos. Diseñamos la arquitectura, construimos el sistema y lo llevamos a producción.",
   email: "evoraltech@gmail.com",
+  phone: "+54 9 261 774-2367",
+  /** wa.me takes the number with no plus sign, spaces or dashes. */
+  whatsapp: "https://wa.me/5492617742367",
   location: "Argentina — trabajamos en remoto",
   socials: [
+    { label: "WhatsApp", href: "https://wa.me/5492617742367", icon: WhatsappIcon },
     { label: "Instagram", href: "https://instagram.com/evoraltech", icon: InstagramIcon },
     { label: "LinkedIn", href: "https://linkedin.com/company/evoraltech", icon: LinkedinIcon },
   ] satisfies SocialLink[],
