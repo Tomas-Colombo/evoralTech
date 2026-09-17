@@ -22,7 +22,7 @@ export const siteConfig = {
   tagline: "Engineering Studio",
   description:
     "Convertimos ideas en productos. Diseñamos la arquitectura, construimos el sistema y lo llevamos a producción.",
-  email: "hola@evoraltech.com",
+  email: "evoraltech@gmail.com",
   location: "Argentina — trabajamos en remoto",
   socials: [
     { label: "Instagram", href: "https://instagram.com/evoraltech", icon: InstagramIcon },
