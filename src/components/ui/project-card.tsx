@@ -23,11 +23,13 @@ export interface ProjectCardProps {
 export function ProjectCard({ project, className }: ProjectCardProps) {
   const { name, tagline, description, tags, year, status, icon: Icon, href } = project;
   const isLinked = Boolean(href);
+  const isExternal = href?.startsWith("http") ?? false;
   const Root = isLinked ? "a" : "article";
 
   return (
     <Root
       {...(isLinked ? { href } : {})}
+      {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl border border-gold-500/15 bg-surface transition-colors duration-300",
         isLinked

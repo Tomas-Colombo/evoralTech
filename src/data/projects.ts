@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Boxes, BrainCircuit, Radar } from "lucide-react";
+import { BadgeCheck, BrainCircuit, Calculator } from "lucide-react";
 
 export type ProjectStatus = "live" | "building" | "internal";
 
@@ -32,15 +32,16 @@ export const projectStatusLabels: Record<ProjectStatus, string> = {
  */
 export const projects: Project[] = [
   {
-    slug: "plataforma-logistica",
-    name: "Plataforma logística",
-    tagline: "Trazabilidad de flota en tiempo real",
+    slug: "miliors",
+    name: "MiLiors",
+    tagline: "Perfiles de talento con certificados verificables",
     description:
-      "Rediseño de un monolito heredado hacia una arquitectura por dominios, con ingesta de eventos y tableros operativos que sostienen miles de envíos por día.",
-    tags: ["Next.js", "Event sourcing", "PostgreSQL"],
-    year: "2025",
+      "Plataforma de contratación que reemplaza el CV por un perfil verificable: evaluación de personalidad, potencial laboral y perfil técnico en un solo lugar. Cada certificado lleva firma criptográfica y cualquiera puede validarlo en público, sin llamados de referencia ni PDF editables.",
+    tags: ["Next.js", "Firma criptográfica", "Verificación pública"],
+    year: "2026",
     status: "live",
-    icon: Radar,
+    icon: BadgeCheck,
+    href: "https://miliors.com",
   },
   {
     slug: "asistente-ai-native",
@@ -54,14 +55,15 @@ export const projects: Project[] = [
     icon: BrainCircuit,
   },
   {
-    slug: "design-system",
-    name: "Design system interno",
-    tagline: "Una sola base para todos los productos",
+    slug: "andes-leasing",
+    name: "Andes Leasing",
+    tagline: "Simulador de cuotas para leasing PyME",
     description:
-      "Librería de componentes tipada y documentada, con tokens compartidos entre diseño y código, que unificó cuatro frontends que venían divergiendo.",
-    tags: ["React", "Tailwind", "Atomic design"],
-    year: "2024",
-    status: "internal",
-    icon: Boxes,
+      "Landing de captación con un simulador que estima cuota y ahorro impositivo según tipo de bien, anticipo y moneda, tomando la cotización del dólar BNA publicada por el BCRA. Cada consulta cierra en WhatsApp con el contexto ya cargado.",
+    tags: ["React", "Vite", "Simulador financiero"],
+    year: "2026",
+    status: "live",
+    icon: Calculator,
+    href: "https://www.andesleasingmendoza.com",
   },
 ];

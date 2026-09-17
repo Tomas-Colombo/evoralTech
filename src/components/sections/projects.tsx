@@ -44,11 +44,11 @@ export function Projects() {
             Proyectos
           </span>
           <h2 className="font-display mt-4 text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-5xl">
-            Sistemas que seguimos sosteniendo
+            Casos de Éxito y Soporte Activo
           </h2>
           <p className="mt-5 text-balance text-base leading-relaxed text-muted sm:text-lg">
-            No entregamos y desaparecemos. Cada proyecto acá abajo sigue
-            corriendo, y en varios seguimos adentro.
+            Desarrollamos plataformas de alto rendimiento y garantizamos su
+            disponibilidad, escalabilidad y mantenimiento diario.
           </p>
         </motion.header>
 

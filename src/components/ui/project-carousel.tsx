@@ -125,30 +125,73 @@ export interface ProjectCarouselProps {
 /**
  * Coverflow-style carousel: one card in front, its neighbours receding behind.
  *
- * Wraps around, so the list stays navigable in both directions no matter how
- * many projects there are. Cards share one grid cell, which means the track
- * takes the height of the tallest card without a hard-coded value.
+ * The ring is padded with repeated copies of the list until there are at least
+ * two off-stage slots on each side, and visible neighbours are capped so the
+ * stage never shows the same project twice. Every card then shifts by the same
+ * number of steps per move; the one that wraps from one end of the ring to the
+ * other is repositioned instantly, off-stage, so nothing slides across.
  */
 export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
-  const [active, setActive] = React.useState(0);
+  const count = projects.length;
   const prefersReducedMotion = useReducedMotion();
   const tracker = usePointerTracker();
-  const count = projects.length;
 
-  /** Signed distance from the active card, taking the shorter way around. */
-  const offsetOf = React.useCallback(
-    (index: number) => {
-      let offset = index - active;
-      if (offset > count / 2) offset -= count;
-      if (offset < -count / 2) offset += count;
+  const neighbours = Math.max(
+    0,
+    Math.min(VISIBLE_NEIGHBOURS, Math.floor((count - 1) / 2)),
+  );
+  /** Visible slots plus one off-stage slot on each side. */
+  const minRing = 2 * neighbours + 3;
+
+  const ring = React.useMemo(() => {
+    if (count === 0) return [];
+    const repeats = Math.max(1, Math.ceil(minRing / count));
+    return Array.from({ length: count * repeats }, (_, index) => {
+      const project = projects[index % count];
+      return { project, key: `${project.slug}-${Math.floor(index / count)}` };
+    });
+  }, [projects, count, minRing]);
+  const ringCount = ring.length;
+
+  /**
+   * The front card, plus the move that brought it there. Keeping the last step
+   * lets the render work out which card wrapped, without reading back mutable
+   * state during render.
+   */
+  const [{ active, step }, setPosition] = React.useState({ active: 0, step: 0 });
+
+  /** Signed distance from a given front card, taking the shorter way around. */
+  const offsetFrom = React.useCallback(
+    (index: number, from: number) => {
+      let offset = index - from;
+      if (offset > ringCount / 2) offset -= ringCount;
+      if (offset < -ringCount / 2) offset += ringCount;
       return offset;
     },
-    [active, count],
+    [ringCount],
   );
 
+  const previousActive = ((active - step) % ringCount + ringCount) % ringCount;
+
   const go = React.useCallback(
-    (direction: number) => setActive((current) => (current + direction + count) % count),
-    [count],
+    (delta: number) =>
+      setPosition(({ active: current }) => ({
+        active: (current + delta + ringCount) % ringCount,
+        step: delta,
+      })),
+    [ringCount],
+  );
+
+  /** Jumps to a project by its index in the original list, the short way around. */
+  const goToProject = React.useCallback(
+    (target: number) =>
+      setPosition(({ active: current }) => {
+        let delta = target - (current % count);
+        if (delta > count / 2) delta -= count;
+        if (delta < -count / 2) delta += count;
+        return { active: (current + delta + ringCount) % ringCount, step: delta };
+      }),
+    [count, ringCount],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -181,20 +224,28 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
         style={{ perspective: 1400 }}
         className="grid cursor-grab touch-pan-y place-items-center rounded-3xl outline-none focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-gold-300 active:cursor-grabbing"
       >
-        {projects.map((project, index) => {
-          const offset = offsetOf(index);
+        {ring.map(({ project, key }, index) => {
+          const offset = offsetFrom(index, active);
           const distance = Math.abs(offset);
           const isActive = offset === 0;
-          const isHidden = distance > VISIBLE_NEIGHBOURS;
+          const isHidden = distance > neighbours;
+
+          /**
+           * Every card should land exactly `step` slots closer to the front.
+           * A card that does not took the shortcut across the ring instead, so
+           * it is placed without a transition, always while off-stage.
+           */
+          const wrapped = offset !== offsetFrom(index, previousActive) - step;
 
           return (
             <motion.div
-              key={project.slug}
+              key={key}
               // One shared grid cell: the track inherits the tallest card.
               className={cn(
                 "col-start-1 row-start-1 w-[min(86vw,25rem)]",
                 isHidden && "pointer-events-none",
               )}
+              initial={false}
               animate={{
                 x: `${offset * STEP}%`,
                 scale: 1 - distance * 0.12,
@@ -202,11 +253,13 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
                 filter: isActive ? "blur(0px)" : `blur(${distance * 1.5}px)`,
               }}
               transition={
-                prefersReducedMotion
-                  ? { duration: 0.15 }
-                  : { type: "spring", stiffness: 210, damping: 30, mass: 0.9 }
+                wrapped
+                  ? { duration: 0 }
+                  : prefersReducedMotion
+                    ? { duration: 0.15 }
+                    : { type: "spring", stiffness: 210, damping: 30, mass: 0.9 }
               }
-              style={{ zIndex: count - distance }}
+              style={{ zIndex: ringCount - distance }}
             >
               <TiltCard tracker={tracker} disabled={isHidden || Boolean(prefersReducedMotion)}>
                 {/* Only the front card is reachable; the rest are scenery... */}
@@ -224,7 +277,7 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
                 {!isActive && !isHidden && (
                   <button
                     type="button"
-                    onClick={() => setActive(index)}
+                    onClick={() => go(offset)}
                     aria-label={`Ver ${project.name}`}
                     className="absolute inset-0 cursor-pointer rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-300"
                   />
@@ -238,12 +291,12 @@ export function ProjectCarousel({ projects, className }: ProjectCarouselProps) {
       {count > 1 && (
         <div className="mt-10 flex items-center justify-center gap-3">
           {projects.map((project, index) => {
-            const isActive = index === active;
+            const isActive = index === active % count;
             return (
               <button
                 key={project.slug}
                 type="button"
-                onClick={() => setActive(index)}
+                onClick={() => goToProject(index)}
                 aria-label={project.name}
                 aria-current={isActive}
                 className={cn(
