@@ -59,7 +59,8 @@ export function Hero() {
             width={256}
             height={256}
             priority
-            className="mb-8 h-24 w-24 drop-shadow-[0_0_34px_var(--glow)] sm:h-32 sm:w-32"
+            data-knockout
+            className="mb-8 drop-shadow-[0_0_28px_var(--glow)] h-24 w-24 sm:h-32 sm:w-32"
           />
         </motion.div>
 
@@ -84,6 +85,7 @@ export function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
+          data-knockout
           className="font-display mb-6 bg-gradient-to-b from-gold-50 via-gold-200 to-gold-500 bg-clip-text text-5xl font-bold tracking-[-0.03em] text-transparent sm:text-7xl md:text-8xl"
         >
           EvoralTech
@@ -94,6 +96,7 @@ export function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
+          data-knockout
           className="mb-10 flex max-w-3xl flex-wrap items-baseline justify-center gap-x-3 gap-y-1 text-lg text-muted sm:text-xl"
         >
           <span>Convertimos ideas en</span>
@@ -132,6 +135,7 @@ export function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
+          data-knockout
           className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4"
         >
           {capabilities.map(({ icon: Icon, label }) => (
