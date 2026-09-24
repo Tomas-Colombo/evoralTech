@@ -115,6 +115,7 @@ export function Hero() {
         >
           <MiniNavbar
             className="w-full sm:w-auto"
+            links={[{ label: "¿Quiénes somos?", href: "/nosotros" }]}
             actions={[
               {
                 label: "Ver nuestros proyectos",

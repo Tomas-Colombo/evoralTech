@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, BrainCircuit, Calculator } from "lucide-react";
+import { BadgeCheck, BrainCircuit, Calculator, Shirt } from "lucide-react";
 
 export type ProjectStatus = "live" | "building" | "internal";
 
@@ -31,6 +31,17 @@ export const projectStatusLabels: Record<ProjectStatus, string> = {
  * turn a card into a link; the card component handles the rest.
  */
 export const projects: Project[] = [
+  {
+    slug: "utopia",
+    name: "Utopía",
+    tagline: "ERP multi-tenant para retail de indumentaria",
+    description:
+      "Inventario por talle, precios, ventas, reservas, consignaciones y reportes en un solo sistema. El aislamiento entre tenants está garantizado a nivel base de datos con Row Level Security de Postgres, no por filtros de aplicación.",
+    tags: ["Postgres RLS", "Multi-tenant", "Control de accesos"],
+    year: "2026",
+    status: "live",
+    icon: Shirt,
+  },
   {
     slug: "miliors",
     name: "MiLiors",

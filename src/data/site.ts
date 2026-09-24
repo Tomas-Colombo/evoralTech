@@ -19,7 +19,8 @@ export interface FooterLink {
 }
 
 /**
- * PLACEHOLDER contact details and social URLs — replace with the real ones.
+ * LinkedIn is still a guessed URL — confirm the company page before launch.
+ * Everything else here is verified.
  */
 export const siteConfig = {
   name: "EvoralTech",
@@ -33,12 +34,13 @@ export const siteConfig = {
   location: "Argentina — trabajamos en remoto",
   socials: [
     { label: "WhatsApp", href: "https://wa.me/5492617742367", icon: WhatsappIcon },
-    { label: "Instagram", href: "https://instagram.com/evoraltech", icon: InstagramIcon },
+    { label: "Instagram", href: "https://www.instagram.com/evoraltech/", icon: InstagramIcon },
     { label: "LinkedIn", href: "https://linkedin.com/company/evoraltech", icon: LinkedinIcon },
   ] satisfies SocialLink[],
   navigation: [
-    { label: "Inicio", href: "#inicio" },
-    { label: "Proyectos", href: "#proyectos" },
+    { label: "Inicio", href: "/" },
+    { label: "Proyectos", href: "/#proyectos" },
+    { label: "Quiénes somos", href: "/nosotros" },
     { label: "Contacto", href: "#contacto" },
   ] satisfies FooterLink[],
   legal: [

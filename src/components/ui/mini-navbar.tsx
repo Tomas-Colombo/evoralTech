@@ -18,8 +18,8 @@ export interface NavAction {
 
 export interface MiniNavbarProps {
   /**
-   * Navigation entries. While this is empty the mobile toggle is omitted, so
-   * there is never a control that opens nothing.
+   * Navigation entries. On phones up to two render inline; beyond that they
+   * collapse behind a toggle, and an empty list renders no nav at all.
    */
   links?: NavLink[];
   /** Calls to action rendered as pills inside the bar. */
@@ -119,6 +119,8 @@ export function MiniNavbar({ links = [], actions = [], className }: MiniNavbarPr
   const [isOpen, setIsOpen] = React.useState(false);
   const hasLinks = links.length > 0;
   const hasActions = actions.length > 0;
+  /** A toggle that reveals one or two links hides nothing worth hiding. */
+  const collapses = links.length > 2;
 
   return (
     <header
@@ -149,9 +151,23 @@ export function MiniNavbar({ links = [], actions = [], className }: MiniNavbarPr
         )}
       </div>
 
-      {/* Phones: actions stay visible, only the nav links collapse */}
+      {/* Phones: actions stay visible, only a long nav collapses */}
       <div className="flex w-full flex-col items-stretch gap-3 sm:hidden">
-        {hasLinks && (
+        {hasLinks && !collapses && (
+          <nav className="flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            {links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-base text-muted transition-colors hover:text-gold-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        )}
+
+        {hasLinks && collapses && (
           <>
             <button
               type="button"
