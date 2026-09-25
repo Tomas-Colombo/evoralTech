@@ -39,6 +39,7 @@ export const siteConfig = {
   ] satisfies SocialLink[],
   navigation: [
     { label: "Inicio", href: "/" },
+    { label: "Servicios", href: "/#servicios" },
     { label: "Proyectos", href: "/#proyectos" },
     { label: "Quiénes somos", href: "/nosotros" },
     { label: "Contacto", href: "#contacto" },
