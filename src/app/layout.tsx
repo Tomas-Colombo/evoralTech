@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
-import { Footer } from "@/components/sections/footer";
-import { SmoothScroll } from "@/components/smooth-scroll";
+import { Geist_Mono, Newsreader, Schibsted_Grotesk } from "next/font/google";
+
+import { Contact } from "@/components/layout/contact";
+import { Footer } from "@/components/layout/footer";
+import { GridLines } from "@/components/layout/grid-lines";
+import { Loader } from "@/components/layout/loader";
+import { Nav } from "@/components/layout/nav";
+import { Cursor } from "@/components/motion/Cursor";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-display",
+const schibsted = Schibsted_Grotesk({
+  variable: "--font-schibsted",
   subsets: ["latin"],
 });
 
@@ -35,15 +43,36 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Runs before first paint: flags motion support (which enables the hidden
+ * pre-intro states in CSS), decides whether this visit gets the loader, and
+ * guarantees content is revealed even if hydration never happens.
+ */
+const bootScript = `(function(){var d=document.documentElement;var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!rm)d.setAttribute('data-motion','');try{if(rm||sessionStorage.getItem('evoral:visited')){d.setAttribute('data-loader','skip')}else{sessionStorage.setItem('evoral:visited','1')}}catch(e){d.setAttribute('data-loader','skip')}setTimeout(function(){d.setAttribute('data-ready','')},4500)})();`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${newsreader.variable} ${schibsted.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+        <noscript>
+          <style>{`.loader{display:none!important}`}</style>
+        </noscript>
+      </head>
+      <body className="relative min-h-svh">
+        <Loader />
+        <GridLines />
         <SmoothScroll />
-        {children}
+        <Cursor />
+        <Nav />
+        <div id="contenido" tabIndex={-1} className="relative z-[1] outline-none">
+          {children}
+        </div>
+        <Contact />
         <Footer />
       </body>
     </html>

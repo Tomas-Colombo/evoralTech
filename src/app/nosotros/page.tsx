@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PageTransition } from "@/components/motion/PageTransition";
 import { Founders } from "@/components/sections/founders";
 
 const description =
@@ -19,8 +20,10 @@ export const metadata: Metadata = {
 
 export default function NosotrosPage() {
   return (
-    <main className="flex-1">
-      <Founders />
-    </main>
+    <PageTransition>
+      <main>
+        <Founders />
+      </main>
+    </PageTransition>
   );
 }

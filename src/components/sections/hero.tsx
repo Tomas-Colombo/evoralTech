@@ -1,154 +1,198 @@
 "use client";
 
-import Image from "next/image";
-import { motion, type Variants } from "framer-motion";
-import { Cpu, Layers, ShieldCheck, Terminal } from "lucide-react";
+import * as React from "react";
 
-import { FlipWords } from "@/components/ui/flip-words";
-import { MiniNavbar } from "@/components/ui/mini-navbar";
-import { ParticleField } from "@/components/ui/particle-field";
+import { EXPLODE, Sculpture, toPercent, type PieceKey } from "@/components/brand/sculpture";
+import { LocalTime } from "@/components/layout/local-time";
+import { TextReveal } from "@/components/motion/TextReveal";
+import { ButtonLink } from "@/components/ui/button-link";
+import { services } from "@/data/services";
+import { gsap, MEDIA, prefersReducedMotion, useGSAP } from "@/lib/gsap";
+import { onIntro } from "@/lib/intro";
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.12 + 0.15,
-      duration: 0.7,
-      ease: "easeOut",
-    },
-  }),
+const PIECES: PieceKey[] = ["a", "b", "c"];
+
+/** Where each piece flies in from on load, in drawing units. */
+const ASSEMBLE: Record<PieceKey, [number, number]> = {
+  a: [260, -300],
+  b: [150, -170],
+  c: [-120, 140],
 };
 
-const capabilities = [
-  { icon: Layers, label: "Arquitectura de producto" },
-  { icon: Cpu, label: "Sistemas AI-native" },
-  { icon: Terminal, label: "Ingeniería de plataforma" },
-  { icon: ShieldCheck, label: "Confiabilidad en producción" },
+/** Parts list for the exploded view; letters match the callout balloons. */
+const PARTS = [
+  { key: "A", name: "Arquitectura", note: "Modelo de datos" },
+  { key: "B", name: "Sistema", note: "Código e integraciones" },
+  { key: "C", name: "Producción", note: "Deploy y soporte" },
 ];
 
+/**
+ * The thesis: the EvoralTech mark as a physical object. It assembles on load;
+ * on desktop the hero pins while the mark separates into an annotated
+ * exploded view whose three parts are the studio's own process.
+ */
 export function Hero() {
+  const ref = React.useRef<HTMLElement>(null);
+
+  useGSAP(
+    (_, contextSafe) => {
+      const root = ref.current;
+      if (!root || !contextSafe) return;
+      const q = gsap.utils.selector(root);
+
+      const playIntro = contextSafe(() => {
+        if (prefersReducedMotion()) return;
+        const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+        tl.fromTo(
+          q("[data-intro-words] .word-mask > span"),
+          { yPercent: 105 },
+          { yPercent: 0, duration: 1.4, stagger: 0.07 },
+          0.05,
+        ).fromTo(q("[data-intro]"), { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.08 }, 0.5);
+
+        PIECES.forEach((piece, index) => {
+          const [x, y] = ASSEMBLE[piece];
+          const from = { ...toPercent(x, y), autoAlpha: 0 };
+          const to = { xPercent: 0, yPercent: 0, autoAlpha: 1 };
+          tl.fromTo(q(`[data-piece="${piece}"]`), from, { ...to, duration: 1.9 }, 0.1 + index * 0.12).fromTo(
+            q(`[data-shadow="${piece}"]`),
+            from,
+            { ...to, duration: 2.2 },
+            0.2 + index * 0.12,
+          );
+        });
+      });
+      const unsubscribe = onIntro(playIntro);
+
+      /** Slides each piece along the mark's slant axis; shadows drift as it lifts. */
+      const explode = (tl: gsap.core.Timeline, amount: number) => {
+        PIECES.forEach((piece) => {
+          const { x, y, lift } = EXPLODE[piece];
+          tl.to(q(`[data-piece-wrap="${piece}"]`), { ...toPercent(x * amount, y * amount), ease: "none", duration: 1 }, 0).to(
+            q(`[data-shadow-wrap="${piece}"]`),
+            { ...toPercent((x + lift[0]) * amount, (y + lift[1]) * amount), opacity: 0.55, ease: "none", duration: 1 },
+            0,
+          );
+        });
+      };
+
+      const mm = gsap.matchMedia();
+
+      mm.add(MEDIA.desktop, () => {
+        gsap.set(q("[data-annotations]"), { opacity: 1 });
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: root, start: "top top", end: "+=95%", pin: true, scrub: 0.8, anticipatePin: 1 },
+        });
+        explode(tl, 1);
+        tl.fromTo(q("[data-axis]"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0.25)
+          .fromTo(
+            q("[data-leader]"),
+            { strokeDasharray: 1, strokeDashoffset: 1 },
+            { strokeDashoffset: 0, duration: 0.3, stagger: 0.08, ease: "none" },
+            0.45,
+          )
+          .fromTo(
+            q("[data-balloon], [data-dot]"),
+            { opacity: 0, scale: 0.5, transformOrigin: "50% 50%" },
+            { opacity: 1, scale: 1, duration: 0.2, stagger: 0.08, ease: "back.out(2)" },
+            0.6,
+          )
+          .to(q("[data-bar-services]"), { opacity: 0, y: -10, duration: 0.15, ease: "power2.in" }, 0.45)
+          .fromTo(q("[data-parts-item]"), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.2, stagger: 0.07, ease: "power2.out" }, 0.58)
+          .to(q("[data-hero-text]"), { y: -48, ease: "none", duration: 1 }, 0);
+      });
+
+      mm.add(MEDIA.mobile, () => {
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: 0.6 },
+        });
+        explode(tl, 0.7);
+      });
+
+      return () => unsubscribe();
+    },
+    { scope: ref },
+  );
+
   return (
-    <section id="inicio" className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background">
-      <ParticleField className="z-0" />
-
-      {/* Circuit grid, echoing the traces in the brand mark */}
+    <section
+      ref={ref}
+      id="inicio"
+      aria-labelledby="hero-title"
+      className="relative h-svh min-h-[40rem] overflow-hidden lg:min-h-[44rem]"
+    >
       <div
-        aria-hidden="true"
-        className="absolute inset-0 z-[1] opacity-[0.12] [background-image:linear-gradient(to_right,var(--gold-500)_1px,transparent_1px),linear-gradient(to_bottom,var(--gold-500)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]"
-      />
+        className="absolute bottom-[4.25rem] right-[-8vw] w-[min(82vw,calc((100svh-34rem)*1.064))] sm:right-[var(--margin)] md:w-[min(56vw,calc((100svh-32rem)*1.064))] lg:bottom-[5rem] lg:w-[min(44vw,calc((100svh-var(--nav-h)-9.5rem)*1.064))]"
+      >
+        <Sculpture annotations className="w-full" />
+      </div>
 
-      {/* Ambient gold glow */}
-      <div
-        aria-hidden="true"
-        className="animate-evoral-drift absolute left-1/2 top-1/2 z-[1] h-[70vh] w-[70vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,var(--glow)_0%,transparent_65%)] blur-3xl"
-      />
+      <div className="grid-page relative h-full pb-24 pt-[calc(var(--nav-h)+2.5rem)] lg:items-center lg:pb-16 lg:pt-[var(--nav-h)]">
+        <div data-hero-text className="col-span-4 md:col-span-9 lg:col-span-7">
+          <p data-intro className="meta flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-2 sm:gap-x-3">
+            <span aria-hidden="true" className="size-1.5 bg-accent" />
+            Estudio de ingeniería
+            <span aria-hidden="true" className="h-px w-3 bg-rule sm:w-6" />
+            Argentina
+            <span aria-hidden="true" className="h-px w-3 bg-rule sm:w-6" />
+            Remoto
+          </p>
 
-      {/* Bottom fade into the next section */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 z-[2] h-40 bg-gradient-to-t from-background to-transparent"
-      />
-
-      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
-        <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
-          <Image
-            src="/evoraltech-logo.png"
-            alt="EvoralTech"
-            width={256}
-            height={256}
-            priority
-            data-knockout
-            className="mb-8 drop-shadow-[0_0_28px_var(--glow)] h-24 w-24 sm:h-32 sm:w-32"
+          <TextReveal
+            as="h1"
+            id="hero-title"
+            trigger="intro"
+            lines={["Convertimos", "ideas en", { text: "productos.", className: "italic" }]}
+            className="display-tight mt-5 text-[clamp(3.7rem,16.5vw,6rem)] sm:text-[clamp(4.5rem,12vw,8rem)] lg:mt-7 lg:text-[clamp(5rem,9.4vw,10.5rem)]"
           />
-        </motion.div>
 
-        <motion.div
-          custom={1}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-gold-500/25 bg-gold-500/[0.07] px-4 py-1.5 backdrop-blur-sm"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-300 opacity-70" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
-          </span>
-          <span className="text-xs font-medium uppercase tracking-[0.2em] text-gold-100">
-            Engineering Studio
-          </span>
-        </motion.div>
+          <p data-intro className="mt-6 max-w-[26rem] text-[1.0625rem] leading-snug text-ink-2 lg:mt-9 lg:text-lg">
+            Diseñamos la arquitectura, construimos el sistema y lo llevamos a producción.
+          </p>
 
-        <motion.h1
-          custom={2}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          data-knockout
-          className="font-display mb-6 bg-gradient-to-b from-gold-50 via-gold-200 to-gold-500 bg-clip-text text-5xl font-bold tracking-[-0.03em] text-transparent sm:text-7xl md:text-8xl"
-        >
-          EvoralTech
-        </motion.h1>
-
-        <motion.p
-          custom={3}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          data-knockout
-          className="mb-10 flex max-w-3xl flex-wrap items-baseline justify-center gap-x-3 gap-y-1 text-lg text-muted sm:text-xl"
-        >
-          <span>Convertimos ideas en</span>
-          <FlipWords
-            words={["PRODUCTOS", "SISTEMAS", "SOFTWARE", "IMPACTO"]}
-            className="font-display bg-gradient-to-b from-gold-50 via-gold-300 to-gold-600 bg-clip-text text-xl font-bold tracking-[0.01em] text-transparent sm:text-2xl"
-          />
-        </motion.p>
-
-        <motion.div
-          custom={4}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="w-full max-w-md sm:max-w-none sm:w-auto"
-        >
-          <MiniNavbar
-            className="w-full sm:w-auto"
-            links={[{ label: "¿Quiénes somos?", href: "/nosotros" }]}
-            actions={[
-              {
-                label: "Ver nuestros proyectos",
-                href: "#proyectos",
-                variant: "secondary",
-              },
-              {
-                label: "Empezar un proyecto",
-                href: "#contacto",
-                variant: "primary",
-              },
-            ]}
-          />
-        </motion.div>
-
-        <motion.ul
-          custom={5}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          data-knockout
-          className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4"
-        >
-          {capabilities.map(({ icon: Icon, label }) => (
-            <li
-              key={label}
-              className="flex items-center gap-2 text-sm text-muted"
+          <div data-intro className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4 lg:mt-9">
+            <ButtonLink href="#contacto">Empezar un proyecto</ButtonLink>
+            <a
+              href="#proyectos"
+              className="group text-[0.9375rem] font-medium bg-[linear-gradient(var(--ink),var(--ink))] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-0.5 transition-[background-size] duration-500 ease-out-expo hover:bg-[length:0%_1px]"
             >
-              <Icon className="h-4 w-4 text-gold-400" aria-hidden="true" />
-              {label}
-            </li>
-          ))}
-        </motion.ul>
+              Ver proyectos
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div data-intro className="absolute inset-x-0 bottom-0">
+        <div className="grid-page">
+          <div className="col-span-4 flex items-center justify-between gap-6 border-t border-rule py-4 md:col-span-12">
+            <div className="relative hidden lg:block">
+              <ul data-bar-services className="meta hidden items-center gap-x-5 text-ink-2 xl:flex">
+                {services.map((service, index) => (
+                  <li key={service.slug} className="flex items-center gap-5">
+                    {index > 0 && <span aria-hidden="true" className="h-px w-4 bg-rule" />}
+                    <a href="#servicios" className="transition-colors hover:text-ink">
+                      {service.title.join(" ")}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {/* Parts list of the exploded view; takes the services' place while pinned. */}
+              <ol data-parts aria-hidden="true" className="meta absolute inset-y-0 left-0 flex items-center gap-x-8 whitespace-nowrap text-ink-2">
+                {PARTS.map((part) => (
+                  <li key={part.key} data-parts-item className="flex items-center gap-2.5">
+                    <span className="flex size-[1.15rem] items-center justify-center rounded-full border border-ink text-[0.5625rem] text-ink">
+                      {part.key}
+                    </span>
+                    <span className="text-ink">{part.name}</span>
+                    <span className="hidden xl:inline">{part.note}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <span className="meta text-ink-2 lg:hidden">Desplazá para ver más</span>
+            <LocalTime className="meta shrink-0 whitespace-nowrap text-ink-2" />
+          </div>
+        </div>
       </div>
     </section>
   );

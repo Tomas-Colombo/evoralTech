@@ -32,16 +32,24 @@ export const siteConfig = {
   /** wa.me takes the number with no plus sign, spaces or dashes. */
   whatsapp: "https://wa.me/5492617742367",
   location: "Argentina — trabajamos en remoto",
+  /** IANA zone for the local-time readouts. */
+  timeZone: "America/Argentina/Buenos_Aires",
   socials: [
     { label: "WhatsApp", href: "https://wa.me/5492617742367", icon: WhatsappIcon },
     { label: "Instagram", href: "https://www.instagram.com/evoraltech/", icon: InstagramIcon },
     { label: "LinkedIn", href: "https://linkedin.com/company/evoraltech", icon: LinkedinIcon },
   ] satisfies SocialLink[],
+  /** Header links; the contact CTA sits beside them. */
+  primaryNav: [
+    { label: "Proyectos", href: "/#proyectos" },
+    { label: "Servicios", href: "/#servicios" },
+    { label: "Estudio", href: "/nosotros" },
+  ],
   navigation: [
     { label: "Inicio", href: "/" },
     { label: "Servicios", href: "/#servicios" },
     { label: "Proyectos", href: "/#proyectos" },
-    { label: "Quiénes somos", href: "/nosotros" },
+    { label: "Estudio", href: "/nosotros" },
     { label: "Contacto", href: "#contacto" },
   ] satisfies FooterLink[],
   legal: [

@@ -1,6 +1,3 @@
-import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, BrainCircuit, Calculator, Shirt } from "lucide-react";
-
 export type ProjectStatus = "live" | "building" | "internal";
 
 export interface Project {
@@ -11,7 +8,6 @@ export interface Project {
   tags: string[];
   year: string;
   status: ProjectStatus;
-  icon: LucideIcon;
   /**
    * Public URL or case-study route. Leave it out until the page exists:
    * cards without an href render as non-interactive, so nothing 404s.
@@ -40,7 +36,6 @@ export const projects: Project[] = [
     tags: ["Postgres RLS", "Multi-tenant", "Control de accesos"],
     year: "2026",
     status: "live",
-    icon: Shirt,
   },
   {
     slug: "miliors",
@@ -51,7 +46,6 @@ export const projects: Project[] = [
     tags: ["Next.js", "Firma criptográfica", "Verificación pública"],
     year: "2026",
     status: "live",
-    icon: BadgeCheck,
     href: "https://miliors.com",
   },
   {
@@ -63,7 +57,6 @@ export const projects: Project[] = [
     tags: ["Claude API", "RAG", "Observabilidad"],
     year: "2025",
     status: "building",
-    icon: BrainCircuit,
   },
   {
     slug: "andes-leasing",
@@ -74,7 +67,6 @@ export const projects: Project[] = [
     tags: ["React", "Vite", "Simulador financiero"],
     year: "2026",
     status: "live",
-    icon: Calculator,
     href: "https://www.andesleasingmendoza.com",
   },
 ];
