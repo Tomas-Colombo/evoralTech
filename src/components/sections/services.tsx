@@ -4,9 +4,10 @@ import * as React from "react";
 
 import { TextReveal } from "@/components/motion/TextReveal";
 import { Reveal } from "@/components/motion/Reveal";
-import { ServicePlate } from "@/components/visuals/service-plates";
+import { playPlate, ServicePlate } from "@/components/visuals/service-plates";
 import { services } from "@/data/services";
 import { gsap, MEDIA, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { cn } from "@/lib/utils";
 
 /**
  * Services as an editorial index. On desktop a sticky plate beside the list
@@ -35,33 +36,24 @@ export function Services() {
     { scope: ref },
   );
 
-  // Redraw the plate that just became active.
+  // Replay the active plate's story. Plates only exist on desktop, and the
+  // loop that follows the story only runs while the plates are on screen.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      mm.add(MEDIA.motion, () => {
-        const plate = ref.current?.querySelector(`[data-plate="${active}"]`);
-        if (!plate) return;
-        const tl = gsap.timeline();
-        tl.fromTo(
-          plate.querySelectorAll("[data-draw]"),
-          { strokeDasharray: 1, strokeDashoffset: 1 },
-          { strokeDashoffset: 0, duration: 0.9, stagger: 0.03, ease: "power2.inOut" },
-        )
-          .fromTo(plate.querySelectorAll("[data-draw-node]"), { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.4, stagger: 0.08, ease: "back.out(2)" }, 0.3)
-          .fromTo(
-            plate.querySelectorAll("[data-accent-draw]"),
-            { strokeDasharray: 1, strokeDashoffset: 1 },
-            { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" },
-            0.5,
-          )
-          .fromTo(plate.querySelectorAll("[data-accent]"), { opacity: 0 }, { opacity: 1, duration: 0.6, stagger: 0.08 }, 0.7);
-
-        const pulses = plate.querySelectorAll("[data-pulse]");
-        if (pulses.length) {
-          const pulse = gsap.to(pulses, { strokeDashoffset: "-=100", duration: 2.4, ease: "none", repeat: -1 });
-          ScrollTrigger.create({ trigger: ref.current, onToggle: (self) => pulse.paused(!self.isActive) });
-        }
+      mm.add(MEDIA.desktop, () => {
+        const svg = ref.current?.querySelector<SVGSVGElement>(`[data-plate="${active}"] svg`);
+        const track = ref.current?.querySelector("[data-plates]");
+        if (!svg || !track) return;
+        const { timeline, restore } = playPlate(active, svg);
+        const visible = ScrollTrigger.create({
+          trigger: track,
+          start: "top 85%",
+          end: "bottom top",
+          onToggle: (self) => timeline.paused(!self.isActive),
+        });
+        timeline.paused(!visible.isActive);
+        return restore;
       });
     },
     { scope: ref, dependencies: [active], revertOnUpdate: true },
@@ -83,18 +75,17 @@ export function Services() {
           <TextReveal
             id="servicios-title"
             lines={["Ingeniería de software", { text: "de punta a punta.", className: "italic" }]}
-            className="display-tight text-[clamp(2.5rem,4.6vw,5rem)]"
+            className="display-tight text-[clamp(2.25rem,3.8vw,3.75rem)]"
           />
           <Reveal as="p" className="mt-6 max-w-xl text-lg leading-snug text-ink-2 md:ml-[33%]">
-            Diseñamos, construimos y operamos los sistemas que sostienen un negocio. La inteligencia artificial no
-            va por separado: la integramos donde resuelve un problema concreto.
+            Diseñamos, construimos y operamos los sistemas que sostienen un negocio.
           </Reveal>
         </div>
       </div>
 
-      <div className="grid-page mt-[clamp(2.5rem,4.5vw,4rem)] items-start">
+      <div data-plates className="grid-page mt-[clamp(2.5rem,4.5vw,4rem)] items-start">
         <div className="sticky top-[calc(var(--nav-h)+1.5rem)] hidden lg:col-span-4 lg:block">
-          <figure className="relative border border-rule bg-paper-2/80">
+          <figure className="relative max-w-[26rem] border border-rule bg-paper-2/80">
             <figcaption className="meta flex justify-between border-b border-rule px-4 py-3 text-ink-2">
               <span>
                 {String(active + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
@@ -106,7 +97,8 @@ export function Services() {
                 <div
                   key={service.slug}
                   data-plate={index}
-                  className="absolute inset-0 transition-opacity duration-500"
+                  // Only the incoming plate fades; the outgoing one hides at once so their text never overlaps.
+                  className={cn("absolute inset-0", index === active ? "transition-opacity duration-300" : "transition-none")}
                   style={{ opacity: index === active ? 1 : 0 }}
                 >
                   <ServicePlate index={index} />
@@ -123,7 +115,7 @@ export function Services() {
               data-service
               data-active={index === active}
               onPointerEnter={() => setActive(index)}
-              className="group relative grid grid-cols-[2.5rem_1fr] gap-x-4 border-t border-rule py-7 last:border-b md:grid-cols-[3rem_1fr_1.15fr] md:gap-x-6 lg:py-6"
+              className="group relative grid grid-cols-[2.5rem_1fr] gap-x-4 border-t border-rule py-7 last:border-b md:grid-cols-[3rem_1fr_1.15fr] md:gap-x-6 lg:py-10"
             >
               <span
                 aria-hidden="true"
@@ -132,7 +124,7 @@ export function Services() {
               <span className="meta pt-[0.9em] text-ink-2 transition-colors lg:group-data-[active=true]:text-accent-deep">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <h3 className="font-display text-[clamp(2rem,2.8vw,3rem)] font-[350] leading-[0.95] tracking-[-0.03em] transition-transform duration-700 ease-out-expo group-hover:translate-x-2">
+              <h3 className="font-display text-[clamp(1.5rem,2vw,2.125rem)] font-[350] leading-[0.95] tracking-[-0.03em] transition-transform duration-700 ease-out-expo group-hover:translate-x-2">
                 <span className="block">{service.title[0]}</span>
                 <span className="block italic text-ink-2 transition-colors duration-500 group-hover:text-ink lg:group-data-[active=true]:text-ink">
                   {service.title[1]}
@@ -140,14 +132,6 @@ export function Services() {
               </h3>
               <div className="col-start-2 mt-5 md:col-start-3 md:mt-1">
                 <p className="max-w-md text-[0.9875rem] leading-relaxed text-ink-2">{service.description}</p>
-                <ul className="meta mt-4 flex flex-wrap gap-x-3 gap-y-1.5 text-ink">
-                  {service.meta.map((tag) => (
-                    <li key={tag} className="flex items-center gap-3">
-                      <span aria-hidden="true" className="size-1 bg-accent" />
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
               </div>
             </li>
           ))}

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 export function Founders() {
   return (
     <>
-      <section aria-labelledby="nosotros-title" className="relative pb-[clamp(4rem,8vw,7rem)] pt-[calc(var(--nav-h)+clamp(3rem,7vw,6rem))]">
+      <section aria-labelledby="nosotros-title" className="relative pb-[clamp(3rem,6vw,5rem)] pt-[calc(var(--nav-h)+clamp(2.5rem,5vw,4.5rem))]">
         <div className="grid-page gap-y-8">
           <div className="col-span-4 md:col-span-12">
             <SmartLink
@@ -35,12 +35,11 @@ export function Founders() {
               as="h1"
               id="nosotros-title"
               lines={["Sistemas que escalan,", "con responsabilidad", { text: "directa.", className: "italic" }]}
-              className="display-tight text-[clamp(3rem,8.2vw,9rem)]"
+              className="display-tight text-[clamp(2.75rem,5.2vw,5rem)]"
             />
-            <Reveal as="p" className="mt-10 max-w-xl text-lg leading-snug text-ink-2 md:ml-[33%]">
+            <Reveal as="p" className="mt-8 max-w-xl text-lg leading-snug text-ink-2 md:ml-[33%]">
               {siteConfig.name} es un estudio de ingeniería fundado por Máximo y Tomás Colombo. Dirigimos cada
-              proyecto de forma directa y dimensionamos el equipo según lo que el sistema exija: desde una plataforma
-              de captación hasta una operación multi-tenant con datos productivos.
+              proyecto de forma directa, con el equipo justo para lo que el sistema exige.
             </Reveal>
           </div>
         </div>
@@ -55,17 +54,17 @@ export function Founders() {
             <article
               key={founder.slug}
               aria-labelledby={`${founder.slug}-name`}
-              className="group rule-top relative py-[clamp(3.5rem,7vw,6rem)]"
+              className="group rule-top relative py-[clamp(2.5rem,4.5vw,4rem)]"
             >
               <span
                 aria-hidden="true"
                 className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-1000 ease-out-expo group-hover:scale-x-100"
               />
-              <div className="grid-page items-end gap-y-10">
+              <div className="grid-page items-end gap-y-8">
                 <h2
                   id={`${founder.slug}-name`}
                   className={cn(
-                    "col-span-4 font-display text-[clamp(3.75rem,11.5vw,12.5rem)] font-[330] leading-[0.86] tracking-[-0.045em] transition-[font-weight] duration-700 ease-out-expo group-hover:font-[480] md:col-span-7",
+                    "col-span-4 font-display text-[clamp(2.5rem,5vw,4.5rem)] font-[330] leading-[0.86] tracking-[-0.045em] transition-[font-weight] duration-700 ease-out-expo group-hover:font-[480] md:col-span-7",
                     mirrored && "md:order-2 md:col-start-6 md:text-right",
                   )}
                 >
@@ -94,14 +93,14 @@ export function Founders() {
         })}
       </section>
 
-      <section aria-label="Principio" className="rule-top relative bg-paper-2/70 py-[clamp(5rem,10vw,9rem)]">
+      <section aria-label="Principio" className="rule-top relative bg-paper-2/70 py-[clamp(3.5rem,7vw,6rem)]">
         <div className="grid-page">
           <p className="meta col-span-4 mb-8 text-ink-2 md:col-span-3 md:mb-0">Principio</p>
           <blockquote className="col-span-4 border-l-2 border-accent pl-6 md:col-span-8 md:pl-10">
             <TextReveal
               as="p"
               lines={["La arquitectura la define", "quien después responde", { text: "por ella en producción.", className: "italic" }]}
-              className="font-display text-[clamp(2.1rem,4.6vw,4.75rem)] font-[350] leading-[1] tracking-[-0.03em]"
+              className="font-display text-[clamp(1.75rem,3vw,3rem)] font-[350] leading-[1] tracking-[-0.03em]"
             />
           </blockquote>
         </div>

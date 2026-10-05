@@ -73,15 +73,12 @@ export function Process() {
           <TextReveal
             id="proceso-title"
             lines={["De la idea", { text: "a producción.", className: "italic" }]}
-            className="display-tight text-[clamp(2.7rem,6.2vw,6.75rem)]"
+            className="display-tight text-[clamp(2.25rem,3.8vw,3.75rem)]"
           />
-          <p className="mt-8 max-w-md text-lg leading-snug text-ink-2 md:ml-[33%]">
-            Cuatro etapas y un mismo equipo técnico, de la primera conversación al sistema en producción.
-          </p>
         </div>
       </div>
 
-      <div data-track className="grid-page relative mt-[clamp(4rem,8vw,7rem)]">
+      <div data-track className="grid-page relative mt-[clamp(3rem,5vw,4.5rem)]">
         <ol className="relative col-span-4 grid gap-y-12 pl-10 md:col-span-12 md:grid-cols-4 md:gap-x-[var(--gutter)] md:pl-0 md:pt-14">
           {/* Track: base rule plus the accent progress, vertical on phones. */}
           <span aria-hidden="true" className="absolute bottom-2 left-[5px] top-2 w-px bg-rule md:bottom-auto md:left-0 md:right-[3rem] md:top-[5px] md:h-px md:w-auto" />
@@ -113,19 +110,11 @@ export function Process() {
                 aria-hidden="true"
                 className="absolute -left-10 top-[0.3rem] size-[11px] border border-ink bg-paper transition-colors duration-500 group-data-[reached=true]:border-accent group-data-[reached=true]:bg-accent md:-top-14 md:left-0"
               />
-              <p className="meta flex items-center gap-2 text-ink-2">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <span aria-hidden="true" className="h-px w-5 bg-rule" />
-                <span className="text-ink">{step.stage}</span>
-              </p>
-              <h3 className="mt-5 font-display text-[clamp(2rem,3vw,3rem)] font-[350] leading-none tracking-[-0.03em]">
+              <p className="meta text-ink-2">{String(index + 1).padStart(2, "0")}</p>
+              <h3 className="mt-5 font-display text-[clamp(1.5rem,2vw,2.125rem)] font-[350] leading-none tracking-[-0.03em]">
                 {step.title}
               </h3>
               <p className="mt-4 max-w-xs text-[0.9875rem] leading-relaxed text-ink-2">{step.description}</p>
-              <p className="meta mt-6 inline-flex items-center gap-2 border-t border-rule pt-3 text-ink">
-                <span aria-hidden="true" className="size-1.5 bg-accent" />
-                {step.deliverable}
-              </p>
             </li>
           ))}
         </ol>

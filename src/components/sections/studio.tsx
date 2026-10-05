@@ -23,7 +23,7 @@ export function Studio() {
           id="estudio-title"
           text="No solo escribimos software. Construimos productos que llegan a producción y se sostienen ahí."
           emphasis={["productos"]}
-          className="display-tight col-span-4 text-[clamp(2.25rem,4.8vw,5rem)] leading-[0.98] md:col-span-10"
+          className="display-tight col-span-4 text-[clamp(1.75rem,3vw,3rem)] leading-[1.05] md:col-span-10"
         />
       </div>
 
@@ -32,8 +32,7 @@ export function Studio() {
           as="p"
           className="col-span-4 max-w-md text-lg leading-snug text-ink-2 md:col-span-5 md:col-start-3"
         >
-          Dirigimos cada proyecto de forma directa y dimensionamos el equipo según lo que el sistema exija: desde una
-          plataforma de captación hasta una operación multi-tenant con datos productivos.
+          Dirigimos cada proyecto de forma directa, con el equipo justo para lo que el sistema exige.
         </Reveal>
 
         <Reveal className="col-span-4 md:col-span-4 md:col-start-9">

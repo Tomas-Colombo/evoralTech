@@ -51,9 +51,10 @@ export function Contact() {
       aria-labelledby="contacto-title"
       className="rule-top relative z-[1] scroll-mt-[var(--nav-h)] overflow-hidden pb-[clamp(4rem,8vw,7rem)] pt-[clamp(4.5rem,11vw,10rem)] outline-none"
     >
+      {/* On desktop the check keeps its bottom edge level with the links block; the +7.6vw offsets its shrink from 33vw to 25vw. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute right-[var(--margin)] top-5 aspect-[830/790] w-[5.5rem] md:top-[clamp(6rem,10vw,10rem)] md:w-[33vw]"
+        className="pointer-events-none absolute right-[var(--margin)] top-5 aspect-[830/790] w-[5.5rem] md:top-[calc(clamp(6rem,10vw,10rem)+7.6vw)] md:w-[25vw]"
       >
         <svg data-check-fill viewBox="280 300 830 790" className="absolute inset-0 h-full w-full">
           <defs>
@@ -86,18 +87,18 @@ export function Contact() {
 
       <div className="grid-page relative">
         <p className="meta col-span-4 mb-6 text-ink-2 md:col-span-12">Contacto</p>
-        <p className="col-span-4 font-display text-[clamp(1.6rem,2.8vw,2.6rem)] italic leading-none tracking-[-0.02em] text-ink-2 md:col-span-12">
+        <p className="col-span-4 font-display text-[clamp(1.25rem,1.8vw,1.75rem)] italic leading-none tracking-[-0.02em] text-ink-2 md:col-span-12">
           ¿Tenés una idea?
         </p>
         <TextReveal
           as="h2"
           id="contacto-title"
           lines={["Construyamos", "el sistema que", "la sostiene."]}
-          className="display-tight col-span-4 mt-3 text-[clamp(3.1rem,8.6vw,9.75rem)] md:col-span-9"
+          className="display-tight col-span-4 mt-3 text-[clamp(2.5rem,6vw,5.5rem)] md:col-span-9"
         />
       </div>
 
-      <div className="grid-page relative mt-[clamp(3rem,7vw,6rem)] gap-y-12 md:items-end">
+      <div className="grid-page relative mt-[clamp(2.5rem,5vw,4rem)] gap-y-12 md:items-end">
         <Reveal className="col-span-4 md:col-span-5">
           <p className="max-w-md text-lg leading-snug text-ink-2">
             Contanos el problema y te respondemos con un diagnóstico técnico.
@@ -117,7 +118,7 @@ export function Contact() {
         <Reveal className="col-span-4 md:col-span-6 md:col-start-7" delay={0.1}>
           <a
             href={`mailto:${siteConfig.email}`}
-            className="group inline-flex items-baseline gap-3 font-display text-[clamp(1.7rem,3.4vw,3.2rem)] leading-none tracking-[-0.02em]"
+            className="group inline-flex items-baseline gap-3 font-display text-[clamp(1.375rem,2.2vw,2rem)] leading-none tracking-[-0.02em]"
           >
             <span className="bg-[linear-gradient(var(--ink),var(--ink))] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-700 ease-out-expo group-hover:bg-[length:100%_1px]">
               {siteConfig.email}

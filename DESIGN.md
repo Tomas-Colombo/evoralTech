@@ -25,19 +25,19 @@ colors:
 typography:
   display-xl:
     fontFamily: "Newsreader, Times New Roman, serif"
-    fontSize: "clamp(3rem, 8.2vw, 9rem)"
+    fontSize: "clamp(3rem, 6vw, 6rem)"
     fontWeight: 350
     lineHeight: 0.9
     letterSpacing: -0.035em
   display-lg:
     fontFamily: "Newsreader, Times New Roman, serif"
-    fontSize: "clamp(2.75rem, 6.2vw, 6.75rem)"
+    fontSize: "clamp(2.25rem, 3.8vw, 3.75rem)"
     fontWeight: 350
     lineHeight: 0.9
     letterSpacing: -0.035em
   display-md:
     fontFamily: "Newsreader, Times New Roman, serif"
-    fontSize: "clamp(2rem, 3vw, 3rem)"
+    fontSize: "clamp(1.5rem, 2vw, 2.125rem)"
     fontWeight: 350
     lineHeight: 1
     letterSpacing: -0.02em
@@ -185,9 +185,9 @@ Todas se cargan con `next/font/google` en `src/app/layout.tsx` y se exponen como
 
 | Token | Tamaño | Peso | Interlineado | Tracking | Uso |
 |---|---|---|---|---|---|
-| `{typography.display-xl}` | clamp(3rem, 8.2vw, 9rem) | 350 | 0.9 | -0.035em | Hero y titulares de sección (`display-tight`) |
-| `{typography.display-lg}` | clamp(2.75rem, 6.2vw, 6.75rem) | 350 | 0.9 | -0.035em | Titulares secundarios |
-| `{typography.display-md}` | clamp(2rem, 3vw, 3rem) | 350 | 1 | -0.02em | Subtítulos editoriales, citas |
+| `{typography.display-xl}` | clamp(3rem, 6vw, 6rem) | 350 | 0.9 | -0.035em | Hero y titulares de sección (`display-tight`) |
+| `{typography.display-lg}` | clamp(2.25rem, 3.8vw, 3.75rem) | 350 | 0.9 | -0.035em | Titulares secundarios |
+| `{typography.display-md}` | clamp(1.5rem, 2vw, 2.125rem) | 350 | 1 | -0.02em | Subtítulos editoriales, citas |
 | `{typography.title-lg}` | 1.5rem | 500 | 1.2 | -0.01em | Títulos de servicio y proyecto |
 | `{typography.title-md}` | 1.125rem | 500 | 1.35 | -0.01em | Títulos de ítems, lead |
 | `{typography.body-md}` | 1.0625rem | 400 | 1.55 | 0 | Texto corrido |

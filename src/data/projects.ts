@@ -5,7 +5,6 @@ export interface Project {
   name: string;
   tagline: string;
   description: string;
-  tags: string[];
   year: string;
   status: ProjectStatus;
   /**
@@ -32,8 +31,7 @@ export const projects: Project[] = [
     name: "Utopía",
     tagline: "Gestión integral para tiendas de indumentaria",
     description:
-      "Inventario por talle, precios, ventas, reservas, consignaciones y reportes en un solo sistema. Varias marcas lo usan a la vez y cada una ve únicamente su propia información: la separación está garantizada desde el núcleo del sistema.",
-    tags: ["Stock por talle", "Varias marcas", "Permisos por rol"],
+      "Inventario por talle, ventas y reservas en un solo sistema, compartido por varias marcas con datos separados.",
     year: "2026",
     status: "live",
   },
@@ -42,8 +40,7 @@ export const projects: Project[] = [
     name: "MiLiors",
     tagline: "Perfiles de talento con certificados verificables",
     description:
-      "Plataforma de contratación que reemplaza el CV por un perfil verificable: evaluación de personalidad, potencial laboral y perfil técnico en un solo lugar. Cada certificado lleva una firma digital imposible de falsificar y cualquiera puede validarlo en público, sin llamados de referencia ni PDF editables.",
-    tags: ["Adiós al CV", "Certificados infalsificables", "Validación pública"],
+      "Reemplaza el CV por un perfil con certificados firmados digitalmente que cualquiera puede validar.",
     year: "2026",
     status: "live",
     href: "https://miliors.com",
@@ -53,8 +50,7 @@ export const projects: Project[] = [
     name: "Andes Leasing",
     tagline: "Simulador de cuotas para leasing PyME",
     description:
-      "Sitio para captar clientes con un simulador que estima cuota y ahorro impositivo según tipo de bien, anticipo y moneda, con el dólar oficial del día. Cada consulta llega por WhatsApp con todos los datos ya cargados.",
-    tags: ["Simulador de cuotas", "Dólar del día", "Consultas por WhatsApp"],
+      "Estima cuota y ahorro impositivo con el dólar del día y envía cada consulta lista por WhatsApp.",
     year: "2026",
     status: "live",
     href: "https://www.andesleasingmendoza.com",

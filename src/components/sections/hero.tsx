@@ -3,10 +3,8 @@
 import * as React from "react";
 
 import { EXPLODE, Sculpture, toPercent, type PieceKey } from "@/components/brand/sculpture";
-import { LocalTime } from "@/components/layout/local-time";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { ButtonLink } from "@/components/ui/button-link";
-import { services } from "@/data/services";
 import { gsap, MEDIA, prefersReducedMotion, useGSAP } from "@/lib/gsap";
 import { onIntro } from "@/lib/intro";
 
@@ -115,7 +113,7 @@ export function Hero() {
       className="relative h-svh min-h-[40rem] overflow-hidden lg:min-h-[44rem]"
     >
       <div
-        className="absolute bottom-[4.25rem] right-[-8vw] w-[min(82vw,calc((100svh-34rem)*1.064))] sm:right-[var(--margin)] md:w-[min(56vw,calc((100svh-32rem)*1.064))] lg:bottom-[5rem] lg:w-[min(44vw,calc((100svh-var(--nav-h)-9.5rem)*1.064))]"
+        className="absolute bottom-[4.25rem] right-[-8vw] w-[min(82vw,calc((100svh-34rem)*1.064))] sm:right-[var(--margin)] md:w-[min(56vw,calc((100svh-32rem)*1.064))] lg:bottom-auto lg:top-1/2 lg:w-[min(36vw,calc((100svh-var(--nav-h)-9.5rem)*0.87))] lg:-translate-y-1/2"
       >
         <div data-intro-frame aria-hidden="true" className="absolute inset-0 hidden sm:block">
           <div className="dot-field absolute inset-[4%]" />
@@ -140,7 +138,7 @@ export function Hero() {
             id="hero-title"
             trigger="intro"
             lines={["Convertimos", "ideas en", { text: "productos.", className: "italic" }]}
-            className="display-tight mt-5 text-[clamp(3.7rem,16.5vw,6rem)] sm:text-[clamp(4.5rem,12vw,8rem)] lg:mt-7 lg:text-[clamp(5rem,9.4vw,10.5rem)]"
+            className="display-tight mt-5 text-[clamp(3rem,13vw,4.25rem)] sm:text-[clamp(3.75rem,9vw,5.5rem)] lg:mt-7 lg:text-[clamp(3.75rem,6vw,6rem)]"
           />
 
           <p data-intro className="mt-6 max-w-[26rem] text-[1.0625rem] leading-snug text-ink-2 lg:mt-9 lg:text-lg">
@@ -159,26 +157,6 @@ export function Hero() {
         </div>
       </div>
 
-      <div data-intro className="absolute inset-x-0 bottom-0">
-        <div className="grid-page">
-          <div className="col-span-4 flex items-center justify-between gap-6 border-t border-rule py-4 md:col-span-12">
-            <div className="hidden lg:block">
-              <ul className="meta hidden items-center gap-x-5 text-ink-2 xl:flex">
-                {services.map((service, index) => (
-                  <li key={service.slug} className="flex items-center gap-5">
-                    {index > 0 && <span aria-hidden="true" className="h-px w-4 bg-rule" />}
-                    <a href="#servicios" className="transition-colors hover:text-ink">
-                      {service.title.join(" ")}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <span className="meta text-ink-2 lg:hidden">Desplazá para ver más</span>
-            <LocalTime className="meta shrink-0 whitespace-nowrap text-ink-2" />
-          </div>
-        </div>
-      </div>
     </section>
   );
 }

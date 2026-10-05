@@ -2,11 +2,10 @@ import * as React from "react";
 
 import { ImageReveal } from "@/components/motion/ImageReveal";
 import { Parallax } from "@/components/motion/Parallax";
-import { Reveal } from "@/components/motion/Reveal";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { ArrowUpRight } from "@/components/ui/arrow";
 import { AndesVisual, MiliorsVisual, UtopiaVisual } from "@/components/visuals/project-visuals";
-import { projects, projectStatusLabels, type Project } from "@/data/projects";
+import { projects, type Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 type Layout = "left" | "right" | "wide";
@@ -18,21 +17,11 @@ const COMPOSITION: Record<string, { layout: Layout; Visual: () => React.JSX.Elem
   "andes-leasing": { layout: "wide", Visual: AndesVisual },
 };
 
-const pad = (n: number) => String(n).padStart(2, "0");
 const domain = (href: string) => new URL(href).hostname.replace(/^www\./, "");
 
-function MetaRow({ project, index, total }: { project: Project; index: number; total: number }) {
-  return (
-    <div className="meta col-span-4 flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-4 text-ink-2 md:col-span-12">
-      <span>
-        {pad(index + 1)} / {pad(total)}
-      </span>
-      <span className="flex items-center gap-2">
-        <span className={cn("size-1.5 rounded-full", project.status === "live" ? "bg-accent" : "bg-ink-2")} />
-        {projectStatusLabels[project.status]} · {project.year}
-      </span>
-    </div>
-  );
+/** Hairline that opens each project; the section title already says they are live. */
+function ProjectRule() {
+  return <div aria-hidden="true" className="col-span-4 border-b border-rule md:col-span-12" />;
 }
 
 function VisualFrame({ project, className, aspect }: { project: Project; className?: string; aspect: string }) {
@@ -89,13 +78,6 @@ function Details({ project, className, tagline = true }: { project: Project; cla
     <div className={className}>
       {tagline && <Tagline>{project.tagline}</Tagline>}
       <p className="max-w-md text-[0.9875rem] leading-relaxed text-ink-2">{project.description}</p>
-      <ul className="meta mt-6 flex flex-wrap gap-2">
-        {project.tags.map((tag) => (
-          <li key={tag} className="border border-rule px-2.5 py-1.5">
-            {tag}
-          </li>
-        ))}
-      </ul>
       {project.href ? (
         <a
           href={project.href}
@@ -115,11 +97,11 @@ function Details({ project, className, tagline = true }: { project: Project; cla
   );
 }
 
-function ProjectArticle({ project, index, total }: { project: Project; index: number; total: number }) {
+function ProjectArticle({ project }: { project: Project }) {
   const { layout } = COMPOSITION[project.slug];
   const titleId = `${project.slug}-title`;
   const title = (
-    <TextReveal as="h3" id={titleId} lines={[project.name]} className="display-tight text-[clamp(3rem,5.6vw,6.25rem)]" />
+    <TextReveal as="h3" id={titleId} lines={[project.name]} className="display-tight text-[clamp(2rem,3.2vw,3.25rem)]" />
   );
 
   // Each article is sized to fit a single desktop viewport below the nav.
@@ -127,17 +109,17 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
     return (
       <article aria-labelledby={titleId} className="py-[clamp(2.5rem,4.5vw,4rem)]">
         <div className="grid-page gap-y-8">
-          <MetaRow project={project} index={index} total={total} />
+          <ProjectRule />
           <div className="col-span-4 md:col-span-12">
             <TextReveal
               as="h3"
               id={titleId}
               lines={[project.name]}
-              className="display-tight text-[clamp(3rem,7.4vw,8.25rem)]"
+              className="display-tight text-[clamp(2rem,3.2vw,3.25rem)]"
             />
           </div>
-          <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[21/9]" className="col-span-4 md:col-span-8" />
-          <Details project={project} className="col-span-4 flex flex-col justify-end md:col-span-4" />
+          <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[21/9]" className="col-span-4 md:col-span-7" />
+          <Details project={project} className="col-span-4 flex flex-col justify-end md:col-span-4 md:col-start-9" />
         </div>
       </article>
     );
@@ -147,12 +129,12 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
     return (
       <article aria-labelledby={titleId} className="py-[clamp(2.5rem,4.5vw,4rem)]">
         <div className="grid-page gap-y-8">
-          <MetaRow project={project} index={index} total={total} />
+          <ProjectRule />
           <div className="col-span-4 md:col-span-5">
             {title}
             <Details project={project} className="mt-8" />
           </div>
-          <Parallax amount={10} desktopOnly className="col-span-4 md:col-span-7">
+          <Parallax amount={10} desktopOnly className="col-span-4 md:col-span-6 md:col-start-7">
             <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[16/9]" />
           </Parallax>
         </div>
@@ -163,9 +145,9 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
   return (
     <article aria-labelledby={titleId} className="py-[clamp(2.5rem,4.5vw,4rem)]">
       <div className="grid-page gap-y-8">
-        <MetaRow project={project} index={index} total={total} />
-        <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[16/9]" className="col-span-4 md:col-span-7" />
-        <Parallax amount={14} desktopOnly className="col-span-4 flex flex-col justify-end md:col-span-5">
+        <ProjectRule />
+        <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[16/9]" className="col-span-4 md:col-span-6" />
+        <Parallax amount={14} desktopOnly className="col-span-4 flex flex-col justify-end md:col-span-5 md:col-start-8">
           {title}
           <Details project={project} className="mt-8" />
         </Parallax>
@@ -175,10 +157,6 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
 }
 
 export function Projects() {
-  const total = projects.length;
-  const years = projects.map((p) => Number(p.year));
-  const [from, to] = [Math.min(...years), Math.max(...years)];
-
   return (
     <section
       id="proyectos"
@@ -192,23 +170,14 @@ export function Projects() {
           <TextReveal
             id="proyectos-title"
             lines={["Lo que construimos,", { text: "lo seguimos operando.", className: "italic" }]}
-            className="display-tight text-[clamp(2.7rem,6.2vw,6.75rem)]"
+            className="display-tight text-[clamp(2.25rem,3.8vw,3.75rem)]"
           />
-          <div className="mt-8 flex flex-col gap-6 md:ml-[33%] md:flex-row md:items-end md:justify-between">
-            <Reveal as="p" className="max-w-md text-lg leading-snug text-ink-2">
-              Desarrollamos plataformas de alto rendimiento y garantizamos su disponibilidad, escalabilidad y
-              mantenimiento diario.
-            </Reveal>
-            <p className="meta shrink-0 text-ink-2">
-              {pad(total)} proyectos · {from === to ? from : `${from}—${to}`}
-            </p>
-          </div>
         </div>
       </div>
 
       <div className="mt-[clamp(2rem,5vw,4rem)]">
-        {projects.map((project, index) => (
-          <ProjectArticle key={project.slug} project={project} index={index} total={total} />
+        {projects.map((project) => (
+          <ProjectArticle key={project.slug} project={project} />
         ))}
       </div>
     </section>
