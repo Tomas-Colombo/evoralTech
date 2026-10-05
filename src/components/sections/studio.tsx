@@ -14,7 +14,7 @@ export function Studio() {
     <section
       id="estudio"
       aria-labelledby="estudio-title"
-      className="relative bg-paper-2/70 py-[clamp(4rem,8vw,7rem)]"
+      className="band-soft relative py-[clamp(4rem,8vw,7rem)]"
     >
       <div className="grid-page gap-y-8">
         <p className="meta col-span-4 text-ink-2 md:col-span-2">Estudio</p>

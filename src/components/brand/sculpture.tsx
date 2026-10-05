@@ -20,6 +20,20 @@ export const EXPLODE: Record<PieceKey, { x: number; y: number; lift: [number, nu
   c: { x: -60, y: 68, lift: [12, 16] },
 };
 
+/**
+ * Drawing notes for the exploded view, in drawing units: the leader leaves the
+ * piece's edge at `anchor`, bends at `elbow` and ends where the label starts.
+ * Each names the stage that piece stands for in the studio's own sentence.
+ */
+const CALLOUTS: Record<PieceKey, { mark: string; label: string; anchor: [number, number]; elbow: [number, number]; end: number }> = {
+  a: { mark: "A", label: "Arquitectura", anchor: [780, 266], elbow: [824, 222], end: 884 },
+  b: { mark: "B", label: "Sistema", anchor: [612, 511], elbow: [652, 470], end: 700 },
+  c: { mark: "C", label: "Producción", anchor: [843, 700], elbow: [891, 748], end: 940 },
+};
+
+/** The axis the pieces separate along, through the middle of the mark. */
+const AXIS = { x1: 1057, y1: 206, x2: 239, y2: 1140 } as const;
+
 /** Converts drawing units into percentages of the sculpture box. */
 export const toPercent = (x: number, y: number) => ({
   xPercent: (x / SCULPTURE_VB.w) * 100,
@@ -78,6 +92,11 @@ function Faces({ piece, id }: { piece: PieceKey; id: string }) {
 
 export interface SculptureProps {
   className?: string;
+  /**
+   * Adds the drawing notes (assembly axis and one callout per piece), hidden
+   * until an exploded-view animation reveals them. Desktop only.
+   */
+  annotated?: boolean;
 }
 
 /**
@@ -85,7 +104,7 @@ export interface SculptureProps {
  * own geometry, each on its own layer with its own cast shadow, so they can be
  * assembled and exploded with compositor-only transforms.
  */
-export function Sculpture({ className }: SculptureProps) {
+export function Sculpture({ className, annotated = false }: SculptureProps) {
   const id = React.useId().replace(/:/g, "");
   const pieces: PieceKey[] = ["a", "b", "c"];
 
@@ -95,6 +114,23 @@ export function Sculpture({ className }: SculptureProps) {
       style={{ aspectRatio: `${SCULPTURE_VB.w} / ${SCULPTURE_VB.h}` }}
       aria-hidden="true"
     >
+      {annotated && (
+        <svg
+          data-axis
+          viewBox={VIEWBOX}
+          className="absolute inset-0 hidden h-full w-full overflow-visible opacity-0 lg:block"
+        >
+          <line
+            {...AXIS}
+            stroke="var(--accent-deep)"
+            strokeOpacity="0.55"
+            strokeWidth="1"
+            strokeDasharray="22 6 3 6"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      )}
+
       {pieces.map((piece) => (
         <div key={`s-${piece}`} data-shadow-wrap={piece} className="absolute inset-0 will-change-transform">
           <svg data-shadow={piece} viewBox={VIEWBOX} className="absolute inset-0 h-full w-full overflow-visible">
@@ -121,6 +157,39 @@ export function Sculpture({ className }: SculptureProps) {
           </svg>
         </div>
       ))}
+
+      {annotated &&
+        pieces.map((piece) => {
+          const { mark, label, anchor, elbow, end } = CALLOUTS[piece];
+          return (
+            <div key={`n-${piece}`} data-callout-wrap={piece} className="absolute inset-0 hidden will-change-transform lg:block">
+              <svg data-callout viewBox={VIEWBOX} className="absolute inset-0 h-full w-full overflow-visible">
+                <path
+                  d={`M${anchor.join(" ")} L${elbow.join(" ")} H${end}`}
+                  fill="none"
+                  stroke="var(--accent-deep)"
+                  strokeWidth="1"
+                  vectorEffect="non-scaling-stroke"
+                  pathLength={1}
+                  strokeDasharray="1"
+                  strokeDashoffset="1"
+                />
+                <circle cx={anchor[0]} cy={anchor[1]} r="6" fill="var(--paper)" stroke="var(--accent-deep)" strokeWidth="1.5" opacity="0" />
+              </svg>
+              <p
+                data-callout-label
+                className="meta absolute flex -translate-y-1/2 items-center gap-2 whitespace-nowrap text-ink-2 opacity-0"
+                style={{
+                  left: `calc(${((end - SCULPTURE_VB.x) / SCULPTURE_VB.w) * 100}% + 0.5rem)`,
+                  top: `${((elbow[1] - SCULPTURE_VB.y) / SCULPTURE_VB.h) * 100}%`,
+                }}
+              >
+                <span className="text-accent-deep">{mark}</span>
+                {label}
+              </p>
+            </div>
+          );
+        })}
     </div>
   );
 }

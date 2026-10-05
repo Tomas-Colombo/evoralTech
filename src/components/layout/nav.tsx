@@ -55,6 +55,23 @@ export function Nav() {
           },
         });
       });
+
+      // On the home page, in-page links light their marker while their section is being read.
+      const spied = Array.from(header.querySelectorAll<HTMLElement>("[data-spy]"));
+      spied.forEach((link) => {
+        const section = document.getElementById(link.dataset.spy ?? "");
+        if (!section) return;
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 45%",
+          end: "bottom 45%",
+          refreshPriority: -1,
+          onToggle: (self) => {
+            link.dataset.current = String(self.isActive);
+          },
+        });
+      });
+      return () => spied.forEach((link) => delete link.dataset.current);
     },
     { dependencies: [pathname], revertOnUpdate: true },
   );
@@ -99,13 +116,14 @@ export function Nav() {
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
+                  data-spy={pathname === "/" && link.href.startsWith("/#") ? link.href.slice(2) : undefined}
                   className="group relative flex items-center gap-2 text-[0.875rem] tracking-[-0.005em]"
                 >
                   <span
                     aria-hidden="true"
                     className={cn(
                       "size-1.5 bg-accent transition-transform duration-500 ease-out-expo",
-                      active ? "scale-100" : "scale-0 group-hover:scale-100",
+                      active ? "scale-100" : "scale-0 group-hover:scale-100 group-data-[current=true]:scale-100",
                     )}
                   />
                   {link.label}

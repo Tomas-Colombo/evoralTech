@@ -41,7 +41,11 @@ export function Hero() {
           { yPercent: 105 },
           { yPercent: 0, duration: 1.4, stagger: 0.07 },
           0.05,
-        ).fromTo(q("[data-intro]"), { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.08 }, 0.5);
+        )
+          .fromTo(q("[data-intro]"), { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.08 }, 0.5)
+          // Once the parts have landed, the drawing board settles in under them.
+          .fromTo(q("[data-intro-frame]"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.2 }, 1.1)
+          .fromTo(q("[data-intro-frame] .corner-marks"), { "--cm-size": "0px" }, { "--cm-size": "16px", duration: 1.2 }, 1.2);
 
         PIECES.forEach((piece, index) => {
           const [x, y] = ASSEMBLE[piece];
@@ -61,7 +65,8 @@ export function Hero() {
       const explode = (tl: gsap.core.Timeline, amount: number) => {
         PIECES.forEach((piece) => {
           const { x, y, lift } = EXPLODE[piece];
-          tl.to(q(`[data-piece-wrap="${piece}"]`), { ...toPercent(x * amount, y * amount), ease: "none", duration: 1 }, 0).to(
+          const parts = q(`[data-piece-wrap="${piece}"], [data-callout-wrap="${piece}"]`);
+          tl.to(parts, { ...toPercent(x * amount, y * amount), ease: "none", duration: 1 }, 0).to(
             q(`[data-shadow-wrap="${piece}"]`),
             { ...toPercent((x + lift[0]) * amount, (y + lift[1]) * amount), opacity: 0.55, ease: "none", duration: 1 },
             0,
@@ -76,7 +81,18 @@ export function Hero() {
           scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: 0.8 },
         });
         explode(tl, 1);
-        tl.to(q("[data-hero-text]"), { y: -48, ease: "none", duration: 1 }, 0);
+        tl.to(q("[data-hero-text]"), { y: -48, ease: "none", duration: 1 }, 0)
+          // As the parts separate, the mark turns into an annotated assembly
+          // drawing: the axis they slide along, then one callout per part.
+          .fromTo(
+            q("[data-axis]"),
+            { autoAlpha: 0, scale: 0.2, transformOrigin: "48.8% 49.3%" },
+            { autoAlpha: 1, scale: 1, ease: "none", duration: 0.3 },
+            0,
+          )
+          .fromTo(q("[data-callout] circle"), { autoAlpha: 0 }, { autoAlpha: 1, ease: "none", duration: 0.06, stagger: 0.05 }, 0.06)
+          .fromTo(q("[data-callout] path"), { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: "none", duration: 0.18, stagger: 0.05 }, 0.08)
+          .fromTo(q("[data-callout-label]"), { autoAlpha: 0, x: -8 }, { autoAlpha: 1, x: 0, ease: "none", duration: 0.12, stagger: 0.05 }, 0.22);
       });
 
       mm.add(MEDIA.mobile, () => {
@@ -101,7 +117,11 @@ export function Hero() {
       <div
         className="absolute bottom-[4.25rem] right-[-8vw] w-[min(82vw,calc((100svh-34rem)*1.064))] sm:right-[var(--margin)] md:w-[min(56vw,calc((100svh-32rem)*1.064))] lg:bottom-[5rem] lg:w-[min(44vw,calc((100svh-var(--nav-h)-9.5rem)*1.064))]"
       >
-        <Sculpture className="w-full" />
+        <div data-intro-frame aria-hidden="true" className="absolute inset-0 hidden sm:block">
+          <div className="dot-field absolute inset-[4%]" />
+          <span className="corner-marks transition-none [--cm-color:var(--accent)] [--cm-gap:0px] [--cm-size:16px]" />
+        </div>
+        <Sculpture annotated className="w-full" />
       </div>
 
       <div className="grid-page relative h-full pb-24 pt-[calc(var(--nav-h)+2.5rem)] lg:items-center lg:pb-16 lg:pt-[var(--nav-h)]">

@@ -86,7 +86,12 @@
 html {
   color-scheme: light;
   background: var(--paper);
+  scrollbar-color: var(--accent) var(--paper);
   -webkit-text-size-adjust: 100%;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 body {
@@ -136,9 +141,82 @@ body {
   }
 }
 
-/* Sections that want a hairline across the full bleed at their top. */
+/*
+ * Sections that want a hairline across the full bleed at their top. Where
+ * scroll-driven animations exist, the rule is drawn from the left as the
+ * section arrives, like a construction line; elsewhere it is simply there.
+ */
 .rule-top {
-  border-top: 1px solid var(--rule);
+  view-timeline: --rule block;
+}
+
+.rule-top::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: var(--rule);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rule-top::before {
+      animation: rule-draw linear both;
+      animation-timeline: --rule;
+      animation-range: cover 0px cover 55vh;
+    }
+  }
+}
+
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@layer components {
+  /*
+   * Registration marks: four hairline corners around a box, as on a plate or a
+   * viewfinder. Size, gap and colour are variables so callers can animate them.
+   */
+  .corner-marks {
+    --cm-size: 10px;
+    --cm-gap: 6px;
+    --cm-color: var(--accent-deep);
+    position: absolute;
+    inset: calc(var(--cm-gap) * -1);
+    pointer-events: none;
+    background:
+      linear-gradient(var(--cm-color) 0 0) top left / var(--cm-size) 1px,
+      linear-gradient(var(--cm-color) 0 0) top left / 1px var(--cm-size),
+      linear-gradient(var(--cm-color) 0 0) top right / var(--cm-size) 1px,
+      linear-gradient(var(--cm-color) 0 0) top right / 1px var(--cm-size),
+      linear-gradient(var(--cm-color) 0 0) bottom left / var(--cm-size) 1px,
+      linear-gradient(var(--cm-color) 0 0) bottom left / 1px var(--cm-size),
+      linear-gradient(var(--cm-color) 0 0) bottom right / var(--cm-size) 1px,
+      linear-gradient(var(--cm-color) 0 0) bottom right / 1px var(--cm-size);
+    background-repeat: no-repeat;
+    transition:
+      inset 0.6s var(--ease-out),
+      background-size 0.6s var(--ease-out),
+      opacity 0.4s;
+  }
+
+  /* Drawing-board dots behind a figure, fading out toward its edges. */
+  .dot-field {
+    background-image: radial-gradient(circle, rgba(146, 106, 66, 0.3) 1px, transparent 1.4px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(closest-side, #000 30%, transparent);
+  }
+
+  /* A tinted band whose edges dissolve into the page instead of cutting it. */
+  .band-soft {
+    --band: color-mix(in srgb, var(--paper-2) 70%, transparent);
+    background: linear-gradient(to bottom, transparent, var(--band) 5rem, var(--band) calc(100% - 5rem), transparent);
+  }
 }
 
 /* Word masks used by TextReveal. */
@@ -171,7 +249,8 @@ body {
  * right before the intro plays, and a timeout sets it regardless, so content
  * can never stay hidden.
  */
-html[data-motion]:not([data-ready]) [data-intro] {
+html[data-motion]:not([data-ready]) [data-intro],
+html[data-motion]:not([data-ready]) [data-intro-frame] {
   opacity: 0;
 }
 

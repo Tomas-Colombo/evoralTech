@@ -38,13 +38,20 @@ function MetaRow({ project, index, total }: { project: Project; index: number; t
 function VisualFrame({ project, className, aspect }: { project: Project; className?: string; aspect: string }) {
   const { Visual } = COMPOSITION[project.slug];
   const frame = (
-    <ImageReveal className={cn("w-full", aspect)}>
-      <div data-reveal-inner className="absolute inset-0">
-        <div className="absolute inset-0 transition-transform duration-[1.4s] ease-out-expo group-hover/visual:scale-[1.035]">
-          <Visual />
+    <>
+      <ImageReveal className={cn("w-full", aspect)}>
+        <div data-reveal-inner className="absolute inset-0">
+          <div className="absolute inset-0 transition-transform duration-[1.4s] ease-out-expo group-hover/visual:scale-[1.035]">
+            <Visual />
+          </div>
         </div>
-      </div>
-    </ImageReveal>
+      </ImageReveal>
+      {/* Registration marks that open out to frame the plate on hover or focus. */}
+      <span
+        aria-hidden="true"
+        className="corner-marks opacity-50 [--cm-size:8px] group-hover/visual:opacity-100 group-hover/visual:[--cm-gap:12px] group-hover/visual:[--cm-size:20px] group-focus-visible/visual:opacity-100 group-focus-visible/visual:[--cm-gap:12px] group-focus-visible/visual:[--cm-size:20px]"
+      />
+    </>
   );
 
   if (project.href) {
@@ -56,14 +63,14 @@ function VisualFrame({ project, className, aspect }: { project: Project; classNa
         aria-label={`Visitar ${project.name} (${domain(project.href)})`}
         data-cursor="project"
         data-cursor-label="Visitar sitio ↗"
-        className={cn("group/visual block", className)}
+        className={cn("group/visual relative block", className)}
       >
         {frame}
       </a>
     );
   }
   return (
-    <div data-cursor="project" data-cursor-label="Caso en preparación" className={cn("group/visual", className)}>
+    <div data-cursor="project" data-cursor-label="Caso en preparación" className={cn("group/visual relative", className)}>
       {frame}
     </div>
   );

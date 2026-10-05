@@ -28,12 +28,14 @@ export function Process() {
 
       mm.add(MEDIA.motion, () => {
         const horizontal = window.matchMedia("(min-width: 768px)").matches;
+        const rail = ref.current?.querySelector<HTMLElement>("[data-rail]");
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: ref.current?.querySelector("[data-track]"),
             start: horizontal ? "top 70%" : "top 65%",
             end: horizontal ? "bottom 45%" : "bottom 60%",
             scrub: 0.6,
+            invalidateOnRefresh: true,
             onUpdate: (self) => mark(self.progress),
           },
         });
@@ -41,7 +43,16 @@ export function Process() {
           "[data-line]",
           horizontal ? { scaleX: 0 } : { scaleY: 0 },
           { ...(horizontal ? { scaleX: 1 } : { scaleY: 1 }), ease: "none", duration: 1 },
-        ).fromTo("[data-check]", { opacity: 0, scale: 0.6, transformOrigin: "0% 100%" }, { opacity: 1, scale: 1, duration: 0.15, ease: "back.out(2)" }, 0.9);
+        )
+          // A carriage rides the tip of the line and hands over to the check.
+          .fromTo(
+            "[data-head]",
+            { x: 0, y: 0 },
+            { ...(horizontal ? { x: () => rail?.offsetWidth ?? 0 } : { y: () => rail?.offsetHeight ?? 0 }), ease: "none", duration: 1 },
+            0,
+          )
+          .to("[data-head]", { autoAlpha: 0, duration: 0.08, ease: "none" }, 0.92)
+          .fromTo("[data-check]", { opacity: 0, scale: 0.6, transformOrigin: "0% 100%" }, { opacity: 1, scale: 1, duration: 0.15, ease: "back.out(2)" }, 0.9);
       });
 
       mm.add(MEDIA.reduced, () => mark(1));
@@ -79,6 +90,13 @@ export function Process() {
             aria-hidden="true"
             className="absolute bottom-2 left-[5px] top-2 w-px origin-top bg-accent md:bottom-auto md:left-0 md:right-[3rem] md:top-[5px] md:h-[2px] md:w-auto md:origin-left"
           />
+          <span
+            data-rail
+            aria-hidden="true"
+            className="absolute bottom-2 left-[5px] top-2 w-px motion-reduce:hidden md:bottom-auto md:left-0 md:right-[3rem] md:top-[5px] md:h-px md:w-auto"
+          >
+            <span data-head className="absolute left-0 top-0 size-[9px] -translate-x-1/2 -translate-y-1/2 bg-accent-deep md:top-px" />
+          </span>
           <svg
             data-check
             aria-hidden="true"
