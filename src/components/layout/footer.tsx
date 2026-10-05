@@ -1,5 +1,4 @@
 import { Logo } from "@/components/brand/logo";
-import { LocalTime } from "@/components/layout/local-time";
 import { SmartLink } from "@/components/ui/smart-link";
 import { siteConfig } from "@/data/site";
 
@@ -25,8 +24,6 @@ export function Footer() {
           <p className="mt-8 max-w-sm font-display text-[clamp(1.8rem,2.6vw,2.4rem)] leading-[1.05] tracking-[-0.02em]">
             Convertimos ideas en <em className="text-accent-light">productos.</em>
           </p>
-          <p className="meta mt-8 text-paper/55">Estudio de ingeniería · Argentina · Remoto</p>
-          <LocalTime className="meta mt-2 block text-paper/60" />
         </div>
 
         <nav aria-label="Pie de página" className="col-span-2 md:col-span-2 md:col-start-7">
@@ -79,10 +76,7 @@ export function Footer() {
         <p className="col-span-4 md:col-span-3">
           © {year} {siteConfig.name}
         </p>
-        <p className="col-span-4 md:col-span-6">
-          Colofón — Compuesto en Newsreader, Schibsted Grotesk y Geist Mono. Construido con Next.js.
-        </p>
-        <ul className="col-span-4 flex flex-wrap gap-x-5 gap-y-2 md:col-span-3 md:justify-self-end">
+        <ul className="col-span-4 flex flex-wrap gap-x-5 gap-y-2 md:col-span-3 md:col-start-10 md:justify-self-end">
           {siteConfig.legal.map((link) => (
             <li key={link.label}>{link.label}</li>
           ))}

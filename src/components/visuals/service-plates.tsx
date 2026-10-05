@@ -108,7 +108,7 @@ function AiPlate() {
     [0, 1], [0, 2], [1, 3], [2, 3], [2, 4], [3, 5], [4, 5], [5, 6], [4, 7], [2, 7], [1, 5],
   ];
   const path = [0, 2, 3, 5, 6];
-  const names: Record<number, string> = { 0: "CONSULTA", 3: "CONTEXTO", 5: "AGENTE", 6: "ACCIÓN" };
+  const names: Record<number, string> = { 0: "CONSULTA", 3: "TUS DATOS", 5: "ASISTENTE", 6: "ACCIÓN" };
   return (
     <>
       <DotGrid />
@@ -150,7 +150,7 @@ function AiPlate() {
 
 /** Sources on the left, one system on the right, joined by live connectors. */
 function IntegrationsPlate() {
-  const sources = ["API", "WEBHOOK", "PLANILLA", "WHATSAPP"];
+  const sources = ["TU WEB", "E-MAIL", "PLANILLA", "WHATSAPP"];
   return (
     <>
       <DotGrid />

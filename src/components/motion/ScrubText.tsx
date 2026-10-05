@@ -32,7 +32,8 @@ export function ScrubText({ as: Tag = "p", text, className, emphasis = [], id }:
             opacity: 1,
             ease: "none",
             stagger: 0.1,
-            scrollTrigger: { trigger: ref.current, start: "top 78%", end: "bottom 52%", scrub: true },
+            // Fully inked before the text reaches the middle of the screen, so it reads black once centered.
+            scrollTrigger: { trigger: ref.current, start: "top 92%", end: "bottom 70%", scrub: true },
           },
         );
       });

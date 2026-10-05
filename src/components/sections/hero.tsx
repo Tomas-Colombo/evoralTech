@@ -19,17 +19,10 @@ const ASSEMBLE: Record<PieceKey, [number, number]> = {
   c: [-120, 140],
 };
 
-/** Parts list for the exploded view; letters match the callout balloons. */
-const PARTS = [
-  { key: "A", name: "Arquitectura", note: "Modelo de datos" },
-  { key: "B", name: "Sistema", note: "Código e integraciones" },
-  { key: "C", name: "Producción", note: "Deploy y soporte" },
-];
-
 /**
  * The thesis: the EvoralTech mark as a physical object. It assembles on load;
- * on desktop the hero pins while the mark separates into an annotated
- * exploded view whose three parts are the studio's own process.
+ * as the hero scrolls away the pieces drift apart along the mark's slant,
+ * riding the scroll instead of holding it.
  */
 export function Hero() {
   const ref = React.useRef<HTMLElement>(null);
@@ -79,27 +72,11 @@ export function Hero() {
       const mm = gsap.matchMedia();
 
       mm.add(MEDIA.desktop, () => {
-        gsap.set(q("[data-annotations]"), { opacity: 1 });
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: root, start: "top top", end: "+=95%", pin: true, scrub: 0.8, anticipatePin: 1 },
+          scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: 0.8 },
         });
         explode(tl, 1);
-        tl.fromTo(q("[data-axis]"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0.25)
-          .fromTo(
-            q("[data-leader]"),
-            { strokeDasharray: 1, strokeDashoffset: 1 },
-            { strokeDashoffset: 0, duration: 0.3, stagger: 0.08, ease: "none" },
-            0.45,
-          )
-          .fromTo(
-            q("[data-balloon], [data-dot]"),
-            { opacity: 0, scale: 0.5, transformOrigin: "50% 50%" },
-            { opacity: 1, scale: 1, duration: 0.2, stagger: 0.08, ease: "back.out(2)" },
-            0.6,
-          )
-          .to(q("[data-bar-services]"), { opacity: 0, y: -10, duration: 0.15, ease: "power2.in" }, 0.45)
-          .fromTo(q("[data-parts-item]"), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.2, stagger: 0.07, ease: "power2.out" }, 0.58)
-          .to(q("[data-hero-text]"), { y: -48, ease: "none", duration: 1 }, 0);
+        tl.to(q("[data-hero-text]"), { y: -48, ease: "none", duration: 1 }, 0);
       });
 
       mm.add(MEDIA.mobile, () => {
@@ -124,7 +101,7 @@ export function Hero() {
       <div
         className="absolute bottom-[4.25rem] right-[-8vw] w-[min(82vw,calc((100svh-34rem)*1.064))] sm:right-[var(--margin)] md:w-[min(56vw,calc((100svh-32rem)*1.064))] lg:bottom-[5rem] lg:w-[min(44vw,calc((100svh-var(--nav-h)-9.5rem)*1.064))]"
       >
-        <Sculpture annotations className="w-full" />
+        <Sculpture className="w-full" />
       </div>
 
       <div className="grid-page relative h-full pb-24 pt-[calc(var(--nav-h)+2.5rem)] lg:items-center lg:pb-16 lg:pt-[var(--nav-h)]">
@@ -165,8 +142,8 @@ export function Hero() {
       <div data-intro className="absolute inset-x-0 bottom-0">
         <div className="grid-page">
           <div className="col-span-4 flex items-center justify-between gap-6 border-t border-rule py-4 md:col-span-12">
-            <div className="relative hidden lg:block">
-              <ul data-bar-services className="meta hidden items-center gap-x-5 text-ink-2 xl:flex">
+            <div className="hidden lg:block">
+              <ul className="meta hidden items-center gap-x-5 text-ink-2 xl:flex">
                 {services.map((service, index) => (
                   <li key={service.slug} className="flex items-center gap-5">
                     {index > 0 && <span aria-hidden="true" className="h-px w-4 bg-rule" />}
@@ -176,18 +153,6 @@ export function Hero() {
                   </li>
                 ))}
               </ul>
-              {/* Parts list of the exploded view; takes the services' place while pinned. */}
-              <ol data-parts aria-hidden="true" className="meta absolute inset-y-0 left-0 flex items-center gap-x-8 whitespace-nowrap text-ink-2">
-                {PARTS.map((part) => (
-                  <li key={part.key} data-parts-item className="flex items-center gap-2.5">
-                    <span className="flex size-[1.15rem] items-center justify-center rounded-full border border-ink text-[0.5625rem] text-ink">
-                      {part.key}
-                    </span>
-                    <span className="text-ink">{part.name}</span>
-                    <span className="hidden xl:inline">{part.note}</span>
-                  </li>
-                ))}
-              </ol>
             </div>
             <span className="meta text-ink-2 lg:hidden">Desplazá para ver más</span>
             <LocalTime className="meta shrink-0 whitespace-nowrap text-ink-2" />

@@ -85,10 +85,10 @@ export function Nav() {
           <SmartLink
             href="/"
             aria-label="EvoralTech, inicio"
-            className="col-span-2 flex items-center gap-2.5 justify-self-start md:col-span-3"
+            className="col-span-2 flex items-center gap-3 justify-self-start md:col-span-3"
           >
-            <Logo size={34} priority className="size-[34px]" />
-            <span className="font-display text-[1.3rem] font-[450] tracking-[-0.02em]">EvoralTech</span>
+            <Logo size={44} variant="ring" priority className="size-10 md:size-11" />
+            <span className="font-display text-[1.5rem] font-[450] leading-none tracking-[-0.02em] translate-y-[0.13em] md:text-[1.7rem]">EvoralTech</span>
           </SmartLink>
 
           <nav aria-label="Principal" className="col-span-5 hidden items-center gap-7 md:col-start-4 md:flex lg:col-start-5 lg:gap-9">
@@ -225,9 +225,9 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: (returnFocus?: 
       style={{ clipPath: "inset(0% 0% 100% 0%)" }}
     >
       <div className="grid-page h-[var(--nav-h)] items-center">
-        <span className="col-span-2 flex items-center gap-2.5">
-          <Logo size={34} className="size-[34px]" />
-          <span className="font-display text-[1.3rem] font-[450] tracking-[-0.02em]">EvoralTech</span>
+        <span className="col-span-2 flex items-center gap-3">
+          <Logo size={44} variant="ring" className="size-10 md:size-11" />
+          <span className="font-display text-[1.5rem] font-[450] leading-none tracking-[-0.02em] translate-y-[0.13em] md:text-[1.7rem]">EvoralTech</span>
         </span>
         <button ref={closeRef} type="button" onClick={() => onClose(true)} className="meta col-span-2 -mr-2 h-11 justify-self-end px-2">
           Cerrar

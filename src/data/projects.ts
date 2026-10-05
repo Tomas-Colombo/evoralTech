@@ -30,10 +30,10 @@ export const projects: Project[] = [
   {
     slug: "utopia",
     name: "Utopía",
-    tagline: "ERP multi-tenant para retail de indumentaria",
+    tagline: "Gestión integral para tiendas de indumentaria",
     description:
-      "Inventario por talle, precios, ventas, reservas, consignaciones y reportes en un solo sistema. El aislamiento entre tenants está garantizado a nivel base de datos con Row Level Security de Postgres, no por filtros de aplicación.",
-    tags: ["Postgres RLS", "Multi-tenant", "Control de accesos"],
+      "Inventario por talle, precios, ventas, reservas, consignaciones y reportes en un solo sistema. Varias marcas lo usan a la vez y cada una ve únicamente su propia información: la separación está garantizada desde el núcleo del sistema.",
+    tags: ["Stock por talle", "Varias marcas", "Permisos por rol"],
     year: "2026",
     status: "live",
   },
@@ -42,29 +42,19 @@ export const projects: Project[] = [
     name: "MiLiors",
     tagline: "Perfiles de talento con certificados verificables",
     description:
-      "Plataforma de contratación que reemplaza el CV por un perfil verificable: evaluación de personalidad, potencial laboral y perfil técnico en un solo lugar. Cada certificado lleva firma criptográfica y cualquiera puede validarlo en público, sin llamados de referencia ni PDF editables.",
-    tags: ["Next.js", "Firma criptográfica", "Verificación pública"],
+      "Plataforma de contratación que reemplaza el CV por un perfil verificable: evaluación de personalidad, potencial laboral y perfil técnico en un solo lugar. Cada certificado lleva una firma digital imposible de falsificar y cualquiera puede validarlo en público, sin llamados de referencia ni PDF editables.",
+    tags: ["Adiós al CV", "Certificados infalsificables", "Validación pública"],
     year: "2026",
     status: "live",
     href: "https://miliors.com",
-  },
-  {
-    slug: "asistente-ai-native",
-    name: "Asistente AI-native",
-    tagline: "Copiloto de operaciones sobre datos propios",
-    description:
-      "Capa de recuperación y orquestación de agentes sobre la base de conocimiento del cliente, con evaluaciones automáticas y trazas de cada respuesta.",
-    tags: ["Claude API", "RAG", "Observabilidad"],
-    year: "2025",
-    status: "building",
   },
   {
     slug: "andes-leasing",
     name: "Andes Leasing",
     tagline: "Simulador de cuotas para leasing PyME",
     description:
-      "Landing de captación con un simulador que estima cuota y ahorro impositivo según tipo de bien, anticipo y moneda, tomando la cotización del dólar BNA publicada por el BCRA. Cada consulta cierra en WhatsApp con el contexto ya cargado.",
-    tags: ["React", "Vite", "Simulador financiero"],
+      "Sitio para captar clientes con un simulador que estima cuota y ahorro impositivo según tipo de bien, anticipo y moneda, con el dólar oficial del día. Cada consulta llega por WhatsApp con todos los datos ya cargados.",
+    tags: ["Simulador de cuotas", "Dólar del día", "Consultas por WhatsApp"],
     year: "2026",
     status: "live",
     href: "https://www.andesleasingmendoza.com",

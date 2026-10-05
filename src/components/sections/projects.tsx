@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { AiAssistant } from "@/components/sections/ai-assistant";
 import { ImageReveal } from "@/components/motion/ImageReveal";
 import { Parallax } from "@/components/motion/Parallax";
 import { Reveal } from "@/components/motion/Reveal";
@@ -113,12 +112,13 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
   const { layout } = COMPOSITION[project.slug];
   const titleId = `${project.slug}-title`;
   const title = (
-    <TextReveal as="h3" id={titleId} lines={[project.name]} className="display-tight text-[clamp(3.5rem,8.6vw,9.25rem)]" />
+    <TextReveal as="h3" id={titleId} lines={[project.name]} className="display-tight text-[clamp(3rem,5.6vw,6.25rem)]" />
   );
 
+  // Each article is sized to fit a single desktop viewport below the nav.
   if (layout === "wide") {
     return (
-      <article aria-labelledby={titleId} className="py-[clamp(3.5rem,7vw,6rem)]">
+      <article aria-labelledby={titleId} className="py-[clamp(2.5rem,4.5vw,4rem)]">
         <div className="grid-page gap-y-8">
           <MetaRow project={project} index={index} total={total} />
           <div className="col-span-4 md:col-span-12">
@@ -126,14 +126,11 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
               as="h3"
               id={titleId}
               lines={[project.name]}
-              className="display-tight text-[clamp(3.5rem,12.4vw,13.5rem)]"
+              className="display-tight text-[clamp(3rem,7.4vw,8.25rem)]"
             />
           </div>
-          <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[21/9]" className="col-span-4 md:col-span-12" />
-          <Reveal className="col-span-4 md:col-span-4">
-            <Tagline>{project.tagline}</Tagline>
-          </Reveal>
-          <Details project={project} tagline={false} className="col-span-4 md:col-span-6 md:col-start-7" />
+          <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[21/9]" className="col-span-4 md:col-span-8" />
+          <Details project={project} className="col-span-4 flex flex-col justify-end md:col-span-4" />
         </div>
       </article>
     );
@@ -141,15 +138,15 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
 
   if (layout === "right") {
     return (
-      <article aria-labelledby={titleId} className="py-[clamp(3.5rem,7vw,6rem)]">
-        <div className="grid-page gap-y-10">
+      <article aria-labelledby={titleId} className="py-[clamp(2.5rem,4.5vw,4rem)]">
+        <div className="grid-page gap-y-8">
           <MetaRow project={project} index={index} total={total} />
-          <div className="col-span-4 md:col-span-4">
+          <div className="col-span-4 md:col-span-5">
             {title}
             <Details project={project} className="mt-8" />
           </div>
-          <Parallax amount={10} desktopOnly className="col-span-4 md:col-span-8 md:mt-[10vw]">
-            <VisualFrame project={project} aspect="aspect-[16/11]" />
+          <Parallax amount={10} desktopOnly className="col-span-4 md:col-span-7">
+            <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[16/9]" />
           </Parallax>
         </div>
       </article>
@@ -157,11 +154,11 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
   }
 
   return (
-    <article aria-labelledby={titleId} className="py-[clamp(3.5rem,7vw,6rem)]">
-      <div className="grid-page gap-y-10">
+    <article aria-labelledby={titleId} className="py-[clamp(2.5rem,4.5vw,4rem)]">
+      <div className="grid-page gap-y-8">
         <MetaRow project={project} index={index} total={total} />
-        <VisualFrame project={project} aspect="aspect-[4/3]" className="col-span-4 md:col-span-8" />
-        <Parallax amount={14} desktopOnly className="col-span-4 flex flex-col justify-end md:col-span-4">
+        <VisualFrame project={project} aspect="aspect-[4/3] md:aspect-[16/9]" className="col-span-4 md:col-span-7" />
+        <Parallax amount={14} desktopOnly className="col-span-4 flex flex-col justify-end md:col-span-5">
           {title}
           <Details project={project} className="mt-8" />
         </Parallax>
@@ -173,6 +170,7 @@ function ProjectArticle({ project, index, total }: { project: Project; index: nu
 export function Projects() {
   const total = projects.length;
   const years = projects.map((p) => Number(p.year));
+  const [from, to] = [Math.min(...years), Math.max(...years)];
 
   return (
     <section
@@ -195,20 +193,16 @@ export function Projects() {
               mantenimiento diario.
             </Reveal>
             <p className="meta shrink-0 text-ink-2">
-              {pad(total)} proyectos · {Math.min(...years)}—{Math.max(...years)}
+              {pad(total)} proyectos · {from === to ? from : `${from}—${to}`}
             </p>
           </div>
         </div>
       </div>
 
       <div className="mt-[clamp(2rem,5vw,4rem)]">
-        {projects.map((project, index) =>
-          project.slug === "asistente-ai-native" ? (
-            <AiAssistant key={project.slug} index={index} total={total} />
-          ) : (
-            <ProjectArticle key={project.slug} project={project} index={index} total={total} />
-          ),
-        )}
+        {projects.map((project, index) => (
+          <ProjectArticle key={project.slug} project={project} index={index} total={total} />
+        ))}
       </div>
     </section>
   );

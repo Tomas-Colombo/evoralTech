@@ -75,7 +75,7 @@ export function Services() {
       id="servicios"
       tabIndex={-1}
       aria-labelledby="servicios-title"
-      className="rule-top relative scroll-mt-[var(--nav-h)] pb-[clamp(5rem,10vw,9rem)] pt-[clamp(4rem,8vw,7rem)] outline-none"
+      className="rule-top relative scroll-mt-[var(--nav-h)] pb-[clamp(3.5rem,6vw,5.5rem)] pt-[clamp(3.5rem,6vw,5.5rem)] outline-none"
     >
       <div className="grid-page gap-y-8">
         <p className="meta col-span-4 text-ink-2 md:col-span-3">Servicios</p>
@@ -83,20 +83,22 @@ export function Services() {
           <TextReveal
             id="servicios-title"
             lines={["Ingeniería de software", { text: "de punta a punta.", className: "italic" }]}
-            className="display-tight text-[clamp(2.7rem,6.2vw,6.75rem)]"
+            className="display-tight text-[clamp(2.5rem,4.6vw,5rem)]"
           />
-          <Reveal as="p" className="mt-8 max-w-xl text-lg leading-snug text-ink-2 md:ml-[33%]">
+          <Reveal as="p" className="mt-6 max-w-xl text-lg leading-snug text-ink-2 md:ml-[33%]">
             Diseñamos, construimos y operamos los sistemas que sostienen un negocio. La inteligencia artificial no
             va por separado: la integramos donde resuelve un problema concreto.
           </Reveal>
         </div>
       </div>
 
-      <div className="grid-page mt-[clamp(3.5rem,8vw,7rem)] items-start">
-        <div className="sticky top-[calc(var(--nav-h)+1.5rem)] hidden lg:col-span-5 lg:block">
+      <div className="grid-page mt-[clamp(2.5rem,4.5vw,4rem)] items-start">
+        <div className="sticky top-[calc(var(--nav-h)+1.5rem)] hidden lg:col-span-4 lg:block">
           <figure className="relative border border-rule bg-paper-2/80">
             <figcaption className="meta flex justify-between border-b border-rule px-4 py-3 text-ink-2">
-              <span>Lámina {String(active + 1).padStart(2, "0")}</span>
+              <span>
+                {String(active + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
+              </span>
               <span className="text-ink">{current.title.join(" ")}</span>
             </figcaption>
             <div className="relative aspect-square">
@@ -111,23 +113,17 @@ export function Services() {
                 </div>
               ))}
             </div>
-            <div className="meta flex justify-between border-t border-rule px-4 py-3 text-ink-2">
-              <span>{current.meta.join(" · ")}</span>
-              <span>
-                {String(active + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
-              </span>
-            </div>
           </figure>
         </div>
 
-        <ol className="col-span-4 md:col-span-12 lg:col-span-7">
+        <ol className="col-span-4 md:col-span-12 lg:col-span-8">
           {services.map((service, index) => (
             <li
               key={service.slug}
               data-service
               data-active={index === active}
               onPointerEnter={() => setActive(index)}
-              className="group relative grid grid-cols-[2.5rem_1fr] gap-x-4 border-t border-rule py-9 last:border-b md:grid-cols-[4rem_1.3fr_1fr] md:gap-x-6 lg:py-12"
+              className="group relative grid grid-cols-[2.5rem_1fr] gap-x-4 border-t border-rule py-7 last:border-b md:grid-cols-[3rem_1fr_1.15fr] md:gap-x-6 lg:py-6"
             >
               <span
                 aria-hidden="true"
@@ -136,15 +132,15 @@ export function Services() {
               <span className="meta pt-[0.9em] text-ink-2 transition-colors lg:group-data-[active=true]:text-accent-deep">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <h3 className="font-display text-[clamp(2.25rem,3.9vw,4rem)] font-[350] leading-[0.95] tracking-[-0.03em] transition-transform duration-700 ease-out-expo group-hover:translate-x-2">
+              <h3 className="font-display text-[clamp(2rem,2.8vw,3rem)] font-[350] leading-[0.95] tracking-[-0.03em] transition-transform duration-700 ease-out-expo group-hover:translate-x-2">
                 <span className="block">{service.title[0]}</span>
                 <span className="block italic text-ink-2 transition-colors duration-500 group-hover:text-ink lg:group-data-[active=true]:text-ink">
                   {service.title[1]}
                 </span>
               </h3>
-              <div className="col-start-2 mt-5 md:col-start-3 md:mt-3">
-                <p className="max-w-sm text-[0.9875rem] leading-relaxed text-ink-2">{service.description}</p>
-                <ul className="meta mt-5 flex flex-wrap gap-x-3 gap-y-1.5 text-ink">
+              <div className="col-start-2 mt-5 md:col-start-3 md:mt-1">
+                <p className="max-w-md text-[0.9875rem] leading-relaxed text-ink-2">{service.description}</p>
+                <ul className="meta mt-4 flex flex-wrap gap-x-3 gap-y-1.5 text-ink">
                   {service.meta.map((tag) => (
                     <li key={tag} className="flex items-center gap-3">
                       <span aria-hidden="true" className="size-1 bg-accent" />

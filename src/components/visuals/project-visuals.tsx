@@ -26,7 +26,7 @@ export function UtopiaVisual() {
       <div className="absolute inset-0 [background-image:linear-gradient(var(--rule-faint)_1px,transparent_1px),linear-gradient(90deg,var(--rule-faint)_1px,transparent_1px)] [background-size:4cqw_4cqw]" />
 
       {/* Tenants: separate sheets, isolated at the database, stacked in depth */}
-      {["tenant_c", "tenant_b"].map((tenant, i) => (
+      {["Marca C", "Marca B"].map((tenant, i) => (
         <div
           key={tenant}
           className="absolute border border-rule bg-paper-light/70"
@@ -40,7 +40,7 @@ export function UtopiaVisual() {
 
       <div className="absolute left-[12%] top-[21%] h-[62%] w-[62%] border border-ink bg-paper-light shadow-[1.5cqw_2cqw_4cqw_-1.5cqw_rgba(51,38,29,0.25)]">
         <div className="flex items-center justify-between border-b border-rule px-[2.4cqw] py-[1.6cqw]">
-          <span className="font-mono text-[1.35cqw] uppercase tracking-[0.08em]">tenant_a · Inventario por talle</span>
+          <span className="font-mono text-[1.35cqw] uppercase tracking-[0.08em]">Marca A · Inventario por talle</span>
           <span className="size-[1.2cqw] bg-accent" />
         </div>
         <div className="grid grid-cols-[1.4fr_repeat(6,1fr)] gap-x-[1cqw] px-[2.4cqw] pt-[2cqw]">
@@ -69,8 +69,8 @@ export function UtopiaVisual() {
       </div>
 
       <div className="absolute bottom-[6%] right-[5%] flex items-center gap-[1.2cqw] border border-ink bg-paper px-[1.6cqw] py-[1cqw] font-mono text-[1.35cqw] tracking-[0.02em]">
-        <span className="bg-accent px-[0.8cqw] py-[0.2cqw] text-ink">RLS</span>
-        using (tenant_id = current_tenant())
+        <span className="bg-accent px-[0.8cqw] py-[0.2cqw] text-ink">Privado</span>
+        Cada marca ve solo sus datos
       </div>
     </div>
   );
@@ -80,8 +80,8 @@ export function MiliorsVisual() {
   return (
     <div className="@container absolute inset-0 overflow-hidden bg-brown">
       <div className="guides-dark absolute inset-0 opacity-70" />
-      <div className="absolute left-1/2 top-1/2 h-[82%] w-[46%] -translate-x-[42%] -translate-y-[48%] rotate-[5deg] bg-paper/20" />
-      <div className="absolute left-1/2 top-1/2 flex h-[82%] w-[46%] -translate-x-1/2 -translate-y-1/2 -rotate-[3deg] flex-col bg-paper-light p-[3cqw] shadow-[2cqw_3cqw_5cqw_-2cqw_rgba(0,0,0,0.5)]">
+      <div className="absolute left-1/2 top-1/2 h-[82%] w-[38%] -translate-x-[42%] -translate-y-[48%] rotate-[5deg] bg-paper/20" />
+      <div className="absolute left-1/2 top-1/2 flex h-[82%] w-[38%] -translate-x-1/2 -translate-y-1/2 -rotate-[3deg] flex-col bg-paper-light p-[3cqw] shadow-[2cqw_3cqw_5cqw_-2cqw_rgba(0,0,0,0.5)]">
         <div className="flex items-start justify-between">
           <span className="font-mono text-[1.2cqw] uppercase tracking-[0.1em] text-ink-2">Certificado verificable</span>
           <span className="font-mono text-[1.2cqw] text-ink-2">N.º 0417</span>
@@ -98,7 +98,7 @@ export function MiliorsVisual() {
         </div>
         <div className="mt-auto flex items-end justify-between border-t border-rule pt-[2cqw]">
           <div>
-            <span className="block font-mono text-[1.1cqw] uppercase tracking-[0.1em] text-ink-2">Firma criptográfica</span>
+            <span className="block font-mono text-[1.1cqw] uppercase tracking-[0.1em] text-ink-2">Firma digital</span>
             <span className="mt-[0.6cqw] block font-mono text-[1.3cqw]">3f9a·c1e0·88d2·c07e</span>
           </div>
           <span className="flex size-[7.5cqw] items-center justify-center rounded-full border border-ink">

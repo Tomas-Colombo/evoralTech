@@ -146,7 +146,14 @@ body {
   display: inline-block;
   overflow: hidden;
   vertical-align: top;
-  /* Room for descenders and italic overhang inside the clip. */
+  /*
+   * Room for ascenders, descenders and italic overhang inside the clip.
+   * Tight display leading (0.9) is shorter than the font's own ascent, so the
+   * top needs as much headroom as the bottom. Negative margins keep the line
+   * box unchanged.
+   */
+  padding-top: 0.12em;
+  margin-top: -0.12em;
   padding-bottom: 0.08em;
   margin-bottom: -0.08em;
   padding-inline: 0.04em;
@@ -356,17 +363,4 @@ html.lenis body {
 
 .cursor[data-pressed="true"] .cursor-shape {
   scale: 0.85;
-}
-
-/* Exploded-view annotations stay hidden until the hero timeline owns them. */
-html[data-motion] [data-annotations],
-html[data-motion] [data-parts-item] {
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-parts],
-  [data-annotations] {
-    display: none !important;
-  }
 }

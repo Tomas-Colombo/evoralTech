@@ -76,20 +76,8 @@ function Faces({ piece, id }: { piece: PieceKey; id: string }) {
   );
 }
 
-/** Callout balloons and leader lines for the exploded state, in drawing units. */
-const CALLOUTS: Record<PieceKey, { from: [number, number]; to: [number, number] }> = {
-  a: { from: [872, 204], to: [992, 228] },
-  b: { from: [366, 494], to: [284, 442] },
-  c: { from: [478, 1098], to: [372, 1128] },
-};
-
-/** Dash-dot construction line along the explode axis. */
-const AXIS = { from: [300, 1068], to: [1040, 228] } as const;
-
 export interface SculptureProps {
   className?: string;
-  /** Render the exploded-view annotations layer (hidden until animated). */
-  annotations?: boolean;
 }
 
 /**
@@ -97,7 +85,7 @@ export interface SculptureProps {
  * own geometry, each on its own layer with its own cast shadow, so they can be
  * assembled and exploded with compositor-only transforms.
  */
-export function Sculpture({ className, annotations = false }: SculptureProps) {
+export function Sculpture({ className }: SculptureProps) {
   const id = React.useId().replace(/:/g, "");
   const pieces: PieceKey[] = ["a", "b", "c"];
 
@@ -133,60 +121,6 @@ export function Sculpture({ className, annotations = false }: SculptureProps) {
           </svg>
         </div>
       ))}
-
-      {annotations && (
-        <svg
-          data-annotations
-          viewBox={VIEWBOX}
-          className="pointer-events-none absolute inset-0 hidden h-full w-full overflow-visible lg:block"
-          fill="none"
-          stroke="var(--ink)"
-        >
-          <line
-            data-axis
-            x1={AXIS.from[0]}
-            y1={AXIS.from[1]}
-            x2={AXIS.to[0]}
-            y2={AXIS.to[1]}
-            strokeWidth="1"
-            strokeOpacity="0.4"
-            strokeDasharray="18 7 3 7"
-            vectorEffect="non-scaling-stroke"
-          />
-          {pieces.map((piece) => {
-            const { from, to } = CALLOUTS[piece];
-            return (
-              <g key={piece} data-callout={piece}>
-                <line
-                  data-leader
-                  pathLength={1}
-                  x1={from[0]}
-                  y1={from[1]}
-                  x2={to[0]}
-                  y2={to[1]}
-                  strokeWidth="1"
-                  vectorEffect="non-scaling-stroke"
-                />
-                <circle data-dot cx={from[0]} cy={from[1]} r="5" fill="var(--ink)" stroke="none" />
-                <g data-balloon>
-                  <circle cx={to[0]} cy={to[1]} r="21" fill="var(--paper)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-                  <text
-                    x={to[0]}
-                    y={to[1]}
-                    dy="0.36em"
-                    textAnchor="middle"
-                    fill="var(--ink)"
-                    stroke="none"
-                    style={{ font: "500 19px var(--font-mono)" }}
-                  >
-                    {piece.toUpperCase()}
-                  </text>
-                </g>
-              </g>
-            );
-          })}
-        </svg>
-      )}
     </div>
   );
 }
