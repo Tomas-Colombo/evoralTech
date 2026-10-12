@@ -2,13 +2,104 @@ import { cn } from "@/lib/utils";
 
 /**
  * Abstract compositions standing in for project imagery. Each one is drawn
- * from what the project actually does, not from stock: sizes and tenants for
+ * from what the project actually does, not from stock: a signed recetario
+ * ledger for a compounding pharmacy, sizes and tenants for
  * a retail ERP, a signed certificate for verifiable profiles, a payment
  * schedule shaped like the Andes for a leasing simulator.
  *
  * They scale with their frame through container query units, so they read
  * the same at any width. Purely decorative.
  */
+
+/** Recetario entries: bar widths for the preparado and partida columns. */
+const ASIENTOS = [
+  [0.82, 0.5],
+  [0.58, 0.72],
+  [0.9, 0.42],
+  [0.66, 0.6],
+  [0.74, 0.8],
+];
+/** Weighing lines of the ficha técnica: bar width and weighed quantity. */
+const PESAJE: [number, string][] = [
+  [0.9, "12,50 g"],
+  [0.62, "3,00 g"],
+  [0.78, "0,75 g"],
+  [0.5, "c.s.p."],
+];
+
+export function FarmaciaVisual() {
+  return (
+    <div className="@container absolute inset-0 overflow-hidden bg-brown-2">
+      <div className="guides-dark absolute inset-0 opacity-50" />
+
+      {/* Libro recetario: the legal ledger, one numbered asiento per preparation */}
+      <div className="absolute left-[6%] top-[11%] flex h-[78%] w-[58%] flex-col bg-paper-light shadow-[2cqw_3cqw_5cqw_-2cqw_rgba(0,0,0,0.5)]">
+        <div className="flex items-center justify-between border-b border-rule px-[2.4cqw] py-[1.6cqw] font-mono text-[1.35cqw] uppercase tracking-[0.08em]">
+          <span>Libro recetario · Folio 042</span>
+          <span className="text-ink-2">Rubricado</span>
+        </div>
+        <div className="grid grid-cols-[5cqw_1.6fr_1fr] gap-x-[1.6cqw] px-[2.4cqw] pt-[1.8cqw] font-mono text-[1.1cqw] uppercase tracking-[0.1em] text-ink-2">
+          <span>N.º</span>
+          <span>Preparado</span>
+          <span>Partida</span>
+        </div>
+        <div className="mt-[1.4cqw] flex flex-col px-[2.4cqw]">
+          {ASIENTOS.map(([preparado, partida], i) => {
+            const last = i === ASIENTOS.length - 1;
+            return (
+              <div
+                key={i}
+                className="grid grid-cols-[5cqw_1.6fr_1fr] items-center gap-x-[1.6cqw] border-t border-rule py-[1.25cqw]"
+              >
+                <span className={cn("font-mono text-[1.35cqw]", last && "text-accent-deep")}>{`0${231 + i}`}</span>
+                <span
+                  className={cn("h-[0.7cqw]", last ? "bg-accent" : "bg-ink/20")}
+                  style={{ width: `${preparado * 100}%` }}
+                />
+                <span
+                  className={cn("h-[0.7cqw]", last ? "bg-accent" : "bg-ink/20")}
+                  style={{ width: `${partida * 100}%` }}
+                />
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-auto flex items-end justify-between border-t border-ink px-[2.4cqw] py-[1.8cqw]">
+          <div>
+            <span className="block font-mono text-[1.1cqw] uppercase tracking-[0.1em] text-ink-2">Cierre diario</span>
+            <span className="mt-[0.6cqw] block font-mono text-[1.3cqw]">a41c·07be·9d32·e5f0</span>
+          </div>
+          <span className="-rotate-[4deg] border border-accent-deep px-[1.2cqw] py-[0.6cqw] font-mono text-[1.1cqw] uppercase tracking-[0.1em] text-accent-deep">
+            Firmado · DT
+          </span>
+        </div>
+      </div>
+
+      {/* Ficha técnica: the weighing lines, frozen once the preparation is confirmed */}
+      <div className="absolute right-[5%] top-[20%] w-[33%] border border-paper/20 bg-brown p-[2.4cqw] text-paper shadow-[1.5cqw_2cqw_4cqw_-1.5cqw_rgba(0,0,0,0.5)]">
+        <span className="font-mono text-[1.1cqw] uppercase tracking-[0.1em] text-paper/60">Ficha técnica · v3</span>
+        <p className="mt-[1.6cqw] font-display text-[3.4cqw] leading-[0.95] tracking-[-0.03em]">
+          Línea de <em>pesaje</em>
+        </p>
+        <div className="mt-[2.2cqw] flex flex-col gap-[1.3cqw]">
+          {PESAJE.map(([w, qty], i) => (
+            <div key={i} className="flex items-center justify-between gap-[1.6cqw]">
+              <span className="h-px flex-1 bg-paper/20">
+                <span className="block h-[0.5cqw] -translate-y-1/2 bg-accent-light" style={{ width: `${w * 100}%` }} />
+              </span>
+              <span className="font-mono text-[1.2cqw] text-paper/80">{qty}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <span className="absolute bottom-[7%] right-[5%] flex items-center gap-[1cqw] font-mono text-[1.3cqw] uppercase tracking-[0.1em] text-paper/70">
+        <span className="size-[1cqw] rounded-full bg-accent" />
+        Stock por partida · Lote trazable
+      </span>
+    </div>
+  );
+}
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 /** Deterministic fill levels for the stock matrix, so renders never differ. */

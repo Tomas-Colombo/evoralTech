@@ -27,6 +27,15 @@ export const projectStatusLabels: Record<ProjectStatus, string> = {
  */
 export const projects: Project[] = [
   {
+    slug: "farmacia-san-jorge",
+    name: "Farmacia San Jorge",
+    tagline: "Laboratorio magistral con trazabilidad legal",
+    description:
+      "De la receta a la entrega: ficha técnica, stock por partida y libro recetario, con cierre diario firmado por el Director Técnico.",
+    year: "2026",
+    status: "building",
+  },
+  {
     slug: "utopia",
     name: "Utopía",
     tagline: "Gestión integral para tiendas de indumentaria",

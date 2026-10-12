@@ -4,14 +4,15 @@ import { ImageReveal } from "@/components/motion/ImageReveal";
 import { Parallax } from "@/components/motion/Parallax";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { ArrowUpRight } from "@/components/ui/arrow";
-import { AndesVisual, MiliorsVisual, UtopiaVisual } from "@/components/visuals/project-visuals";
-import { projects, type Project } from "@/data/projects";
+import { AndesVisual, FarmaciaVisual, MiliorsVisual, UtopiaVisual } from "@/components/visuals/project-visuals";
+import { projects, projectStatusLabels, type Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 type Layout = "left" | "right" | "wide";
 
 /** Each project gets its own composition; none of them is a card. */
 const COMPOSITION: Record<string, { layout: Layout; Visual: () => React.JSX.Element }> = {
+  "farmacia-san-jorge": { layout: "right", Visual: FarmaciaVisual },
   utopia: { layout: "left", Visual: UtopiaVisual },
   miliors: { layout: "right", Visual: MiliorsVisual },
   "andes-leasing": { layout: "wide", Visual: AndesVisual },
@@ -59,7 +60,11 @@ function VisualFrame({ project, className, aspect }: { project: Project; classNa
     );
   }
   return (
-    <div data-cursor="project" data-cursor-label="Caso en preparación" className={cn("group/visual relative", className)}>
+    <div
+      data-cursor="project"
+      data-cursor-label={project.status === "building" ? projectStatusLabels.building : "Caso en preparación"}
+      className={cn("group/visual relative", className)}
+    >
       {frame}
     </div>
   );
@@ -91,7 +96,9 @@ function Details({ project, className, tagline = true }: { project: Project; cla
           <ArrowUpRight className="size-4 transition-transform duration-500 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
       ) : (
-        <p className="meta mt-8 text-ink-2">Caso de estudio en preparación</p>
+        <p className="meta mt-8 text-ink-2">
+          {project.status === "building" ? projectStatusLabels.building : "Caso de estudio en preparación"}
+        </p>
       )}
     </div>
   );
