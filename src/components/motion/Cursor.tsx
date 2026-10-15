@@ -9,6 +9,20 @@ type CursorState = "default" | "link" | "cta" | "project";
 const INTERACTIVE = "[data-cursor], a, button, [role='button'], summary, label";
 const QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
+/**
+ * Fraction of the remaining distance covered per frame at 60fps.
+ *
+ * The small shapes stand in for the pointer itself, so they track almost
+ * instantly — anything slower and the user is aiming with a stale dot. The
+ * large shapes are forgiving of lag, so they keep the trailing feel.
+ */
+const SMOOTHING: Record<CursorState, number> = {
+  default: 0.85,
+  cta: 0.85,
+  link: 0.3,
+  project: 0.3,
+};
+
 function subscribe(onChange: () => void) {
   const query = window.matchMedia(QUERY);
   query.addEventListener("change", onChange);
@@ -37,33 +51,72 @@ export function Cursor() {
     if (!enabled || !root) return;
 
     document.documentElement.classList.add("has-cursor");
-    const xTo = gsap.quickTo(root, "x", { duration: 0.35, ease: "power3.out" });
-    const yTo = gsap.quickTo(root, "y", { duration: 0.35, ease: "power3.out" });
+
+    const setX = gsap.quickSetter(root, "x", "px") as (value: number) => void;
+    const setY = gsap.quickSetter(root, "y", "px") as (value: number) => void;
+
+    let pointerX = 0;
+    let pointerY = 0;
+    let renderedX = 0;
+    let renderedY = 0;
+    let smoothing = SMOOTHING.default;
     let visible = false;
+    // Set when the page moved under the pointer, so the hover state is re-tested.
+    let stale = false;
 
     const setState = (state: CursorState, label = "") => {
-      root.dataset.state = state;
-      if (labelRef.current) labelRef.current.textContent = label;
-    };
-
-    const move = (event: PointerEvent) => {
-      if (!visible) {
-        gsap.set(root, { x: event.clientX, y: event.clientY });
-        root.dataset.visible = "true";
-        visible = true;
+      if (root.dataset.state !== state) {
+        root.dataset.state = state;
+        smoothing = SMOOTHING[state];
       }
-      xTo(event.clientX);
-      yTo(event.clientY);
+      const node = labelRef.current;
+      if (node && node.textContent !== label) node.textContent = label;
     };
 
-    const over = (event: PointerEvent) => {
-      const target = event.target as HTMLElement | null;
+    const applyTarget = (node: EventTarget | null) => {
+      // The listener sits on `document`, so the target is not always an Element.
+      const target = node instanceof Element ? node : null;
+      const tone = target?.closest("[data-nav='dark']") ? "light" : "dark";
+      if (root.dataset.tone !== tone) root.dataset.tone = tone;
+
       const el = target?.closest<HTMLElement>(INTERACTIVE);
-      root.dataset.tone = target?.closest("[data-nav='dark']") ? "light" : "dark";
       if (!el) return setState("default");
       const state = (el.dataset.cursor as CursorState | undefined) ?? "link";
       setState(state, el.dataset.cursorLabel ?? "");
     };
+
+    const tick = () => {
+      if (!visible) return;
+
+      if (stale) {
+        stale = false;
+        applyTarget(document.elementFromPoint(pointerX, pointerY));
+      }
+
+      // Exponential catch-up, normalised by frame time so 60Hz and 144Hz
+      // displays settle over the same number of milliseconds.
+      const step = 1 - Math.pow(1 - smoothing, gsap.ticker.deltaRatio(60));
+      renderedX += (pointerX - renderedX) * step;
+      renderedY += (pointerY - renderedY) * step;
+      setX(renderedX);
+      setY(renderedY);
+    };
+
+    const move = (event: PointerEvent) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (visible) return;
+      renderedX = pointerX;
+      renderedY = pointerY;
+      setX(renderedX);
+      setY(renderedY);
+      root.dataset.visible = "true";
+      visible = true;
+    };
+
+    const over = (event: PointerEvent) => applyTarget(event.target);
+    // Scrolling changes what sits under a motionless pointer.
+    const scroll = () => (stale = true);
 
     const leave = () => {
       root.dataset.visible = "false";
@@ -72,17 +125,23 @@ export function Cursor() {
     const down = () => (root.dataset.pressed = "true");
     const up = () => (root.dataset.pressed = "false");
 
+    gsap.ticker.add(tick);
     window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("scroll", scroll, { passive: true });
     document.addEventListener("pointerover", over, { passive: true });
     document.documentElement.addEventListener("pointerleave", leave);
+    window.addEventListener("blur", leave);
     window.addEventListener("pointerdown", down);
     window.addEventListener("pointerup", up);
 
     return () => {
       document.documentElement.classList.remove("has-cursor");
+      gsap.ticker.remove(tick);
       window.removeEventListener("pointermove", move);
+      window.removeEventListener("scroll", scroll);
       document.removeEventListener("pointerover", over);
       document.documentElement.removeEventListener("pointerleave", leave);
+      window.removeEventListener("blur", leave);
       window.removeEventListener("pointerdown", down);
       window.removeEventListener("pointerup", up);
     };

@@ -375,13 +375,13 @@ html.lenis body {
   border-radius: 999px;
   background: var(--ink);
   transition:
-    width 0.5s var(--ease-out),
-    height 0.5s var(--ease-out),
-    padding 0.5s var(--ease-out),
-    background-color 0.3s,
-    border-color 0.3s,
-    box-shadow 0.4s,
-    scale 0.3s var(--ease-out);
+    width 0.28s var(--ease-out),
+    height 0.28s var(--ease-out),
+    padding 0.28s var(--ease-out),
+    background-color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.25s,
+    scale 0.18s var(--ease-out);
 }
 
 .cursor[data-tone="light"] .cursor-shape {
